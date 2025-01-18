@@ -8,7 +8,7 @@ namespace Events.Channels
         [Tooltip("Assign event to this channel | added subscribers will be invoked.")]
         public UnityAction<T> onEventRaised;
 
-        public void RaiseEvent(T type)
+        public virtual void RaiseEvent(T type)
         {
             onEventRaised?.Invoke(type);
         }
