@@ -38,7 +38,7 @@ namespace Events.Input
         }
         public void OnJump(InputAction.CallbackContext context)
         {
-            Jump.RaiseEvent(context.ReadValue<bool>());
+            Jump.RaiseEvent(true);
         }
     
         public void OnLook(InputAction.CallbackContext context)
