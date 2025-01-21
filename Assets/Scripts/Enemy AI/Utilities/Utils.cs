@@ -27,5 +27,25 @@ public static class Utils
         
     }
 
+    public static UnityEngine.Vector3 GetMouseWorldPosition()
+    {
+        UnityEngine.Vector3 vector = GetMouseWorldPositionWithZ(Input.mousePosition, Camera.main);
+        vector.z = 0f;
+        return vector;
+    }
+    public static UnityEngine.Vector3 GetMouseWorldPositionWithZ()
+    {
+        return GetMouseWorldPositionWithZ(Input.mousePosition, Camera.main);
+    }
+    public static UnityEngine.Vector3 GetMouseWorldPositionWithZ(Camera worldCamera)
+    {
+        return GetMouseWorldPositionWithZ(Input.mousePosition, worldCamera);
+    }
+    public static UnityEngine.Vector3 GetMouseWorldPositionWithZ(UnityEngine.Vector3 screenPosition, Camera worldCamera)
+    {
+        UnityEngine.Vector3 worldPosition = worldCamera.ScreenToWorldPoint(screenPosition);
+        return worldPosition;
+    }
+
 
 }
