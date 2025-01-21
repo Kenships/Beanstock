@@ -124,7 +124,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                 {
                     ""name"": ""WASD"",
                     ""id"": ""00ca640b-d935-4593-8157-c05846ea39b3"",
-                    ""path"": ""Dpad"",
+                    ""path"": ""Dpad(mode=1)"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -399,7 +399,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""eb40bb66-4559-4dfa-9a2f-820438abb426"",
-                    ""path"": ""<Keyboard>/space"",
+                    ""path"": ""<Keyboard>/upArrow"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard&Mouse"",
