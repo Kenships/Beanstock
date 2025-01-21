@@ -1,76 +1,66 @@
-
-using System;
-using Events.Channels;
 using Events.Input;
-using Events.Listeners;
 using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.EventSystems;
-using UnityEngine.InputSystem;
+using Util;
 
 public class PlayerController : MonoBehaviour
 {
     
     [SerializeField] private InputReader inputReader;
     [SerializeField] private float moveSpeed;
-
-    private Vector3 directionalInput;
-    private bool onGround;
-    private Rigidbody2D rb;
     [SerializeField] private float jumpSpeed;
-    private float wallSide;
-    [SerializeField] private float climbSpeed; 
+    [SerializeField] private float climbSpeed;
     [SerializeField] private Vector2 wallJumpSpeed;
     [SerializeField] private float wallSlideDrag;
     [SerializeField] private Transform playerSprite;
-    private float cayoteTime;
+    [SerializeField] private float cayoteTimeMax;
+    private Vector3 _directionalInput;
+    private bool _onGround;
+    private Rigidbody2D _rb;
+    private float _wallSide;
+    private Timer _cayoteTime;
     
     private void Awake()
     {
         inputReader.EnablePlayerActions();
-        rb = gameObject.GetComponent<Rigidbody2D>();
+        _rb = gameObject.GetComponent<Rigidbody2D>();
+        _cayoteTime = new Timer(cayoteTimeMax);
     }
 
     private void Start(){
         inputReader.Jump += Jump;
         inputReader.Move += SetDirection;
     }
-
-    private UnityAction<bool> Test()
-    {
-        throw new NotImplementedException();
-    }
-
+    
     private void Update()
     {
         //jittery camera
         Move();
 
-        setSprite();
+        SetSprite();
     }
 
-    private void setSprite(){
+    private void SetSprite(){
         //rotate player sprite based on their state
 
-        if(wallSide == 0){
+        if(_wallSide == 0){
             //in air or on ground
-            lerpRotate(playerSprite, -rb.linearVelocityX * 2, 10);
+            LerpRotate(playerSprite, -_rb.linearVelocityX * 2, 10);
         }
-        else if(wallRunInput()){
+        else if(WallRunInput()){
             //wallrunning
-            lerpRotate(playerSprite, wallSide * 90, 15);
+            LerpRotate(playerSprite, _wallSide * 90, 15);
         }
         else{
             //sliding down wall
-            lerpRotate(playerSprite, wallSide * 10, 10);
+            LerpRotate(playerSprite, _wallSide * 10, 10);
         }
     }
 
-    private bool wallRunInput(){
-        return directionalInput.x == wallSide && directionalInput.y == 1;
+    private bool WallRunInput(){
+        return Mathf.Approximately(_directionalInput.x, _wallSide) && Mathf.Approximately(_directionalInput.y, 1);
     }
 
-    void lerpRotate(Transform setter, float angle, float speed){
+    private void LerpRotate(Transform setter, float angle, float speed){
         //rotates the object smoothly to a new angle
 
         Vector3 originalAngle = setter.eulerAngles;
@@ -82,79 +72,74 @@ public class PlayerController : MonoBehaviour
     }
     
     private void Jump(){
-        if(cayoteTime > 0){
-            rb.linearVelocity = new Vector2(rb.linearVelocityX, jumpSpeed);
+        if(_cayoteTime.IsRunning){
+            _rb.linearVelocity = new Vector2(_rb.linearVelocityX, jumpSpeed);
         }
     }
 
     private void Move()
     {
         //onground vs. in air movement
-        if(turning() && onGround){
-            moveHorizontal(2f);
+        if(Turning() && _onGround){
+            MoveHorizontal(2f);
         }
         else{
-            moveHorizontal(1);
+            MoveHorizontal(1);
         }
 
-        setGravity();
+        SetGravity();
 
-        wallInteraction();
+        WallInteraction();
 
-        cayoteTime -= Time.deltaTime;
-        if(onGround == true){
-            cayoteTime = 0.15f; 
+        _cayoteTime.Tick(Time.deltaTime);
+        if(_onGround){
+            _cayoteTime.Restart(cayoteTimeMax); 
         }
     }
 
-    private void wallInteraction(){
+    private void WallInteraction(){
         //if the players touching a wall
-        if(wallSide != 0 && onGround == false){
-            if(directionalInput.y == 1){
-                if(directionalInput.x == wallSide){
+        if(_wallSide != 0 && _onGround == false){
+            if(Mathf.Approximately(_directionalInput.y, 1)){
+                if(Mathf.Approximately(_directionalInput.x, _wallSide)){
                     //wall running
-                    rb.linearVelocity = new Vector2(rb.linearVelocityX, climbSpeed);
+                    _rb.linearVelocity = new Vector2(_rb.linearVelocityX, climbSpeed);
                 }
-                else if(directionalInput.x == -wallSide){
+                else if(Mathf.Approximately(_directionalInput.x, -_wallSide)){
                     //wall jump
-                    rb.linearVelocity = new Vector2(directionalInput.x * wallJumpSpeed.x, wallJumpSpeed.y);
+                    _rb.linearVelocity = new Vector2(_directionalInput.x * wallJumpSpeed.x, wallJumpSpeed.y);
                 }
             }
-            else if(directionalInput.x == wallSide && rb.linearVelocityY < 0){
+            else if(Mathf.Approximately(_directionalInput.x, _wallSide) && _rb.linearVelocityY < 0){
                 //sliding down wall
-                rb.linearVelocity *= new Vector2(1, 1 - Time.deltaTime * wallSlideDrag);
+                _rb.linearVelocity *= new Vector2(1, 1 - Time.deltaTime * wallSlideDrag);
             }
         }
     }
 
-    private void setGravity(){
-        if(rb.linearVelocityY > 2){
-            rb.gravityScale = 3;
-        }
-        else{
-            rb.gravityScale = 14;
-        }
+    private void SetGravity()
+    {
+        _rb.gravityScale = _rb.linearVelocityY > 2 ? 3 : 14;
     }
 
-    private void moveHorizontal(float speedFactor){
-        rb.linearVelocity += new Vector2(directionalInput.x * moveSpeed, 0) * speedFactor * Time.deltaTime;
+    private void MoveHorizontal(float speedFactor){
+        _rb.linearVelocity += new Vector2(_directionalInput.x * moveSpeed, 0) * (speedFactor * Time.deltaTime);
     } 
 
-    private bool turning(){
-        float direction = rb.linearVelocityX / Mathf.Abs(rb.linearVelocityX);
-        return direction != directionalInput.x;
+    private bool Turning(){
+        float direction = _rb.linearVelocityX / Mathf.Abs(_rb.linearVelocityX);
+        return !Mathf.Approximately(direction, _directionalInput.x);
     }
-
     public void SetDirection(Vector2 dir)
     {
-        directionalInput = dir;
+        _directionalInput = dir;
     }
 
     public void SetOnGround(bool set){
-        onGround = set;
+        _onGround = set;
     }
 
     public void SetOnWall(int set){
-        wallSide = set;
+        _wallSide = set;
     }
 }

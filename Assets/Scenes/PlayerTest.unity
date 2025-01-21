@@ -1195,6 +1195,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1630959487}
     - target: {fileID: 2332730141399857760, guid: 6c6e01367789f449a812f78d1861ca7d, type: 3}
+      propertyPath: cayoteTimeMax
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2332730141399857760, guid: 6c6e01367789f449a812f78d1861ca7d, type: 3}
       propertyPath: wallSlideDrag
       value: 50
       objectReference: {fileID: 0}
