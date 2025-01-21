@@ -45,15 +45,15 @@ public class PlayerController : MonoBehaviour
 
         if(_wallSide == 0){
             //in air or on ground
-            LerpRotate(playerSprite, -_rb.linearVelocityX * 2, 10);
+            SlerpRotate(playerSprite, -_rb.linearVelocityX * 2, 10);
         }
         else if(WallRunInput()){
             //wallrunning
-            LerpRotate(playerSprite, _wallSide * 90, 15);
+            SlerpRotate(playerSprite, _wallSide * 90, 15);
         }
         else{
             //sliding down wall
-            LerpRotate(playerSprite, _wallSide * 10, 10);
+            SlerpRotate(playerSprite, _wallSide * 10, 10);
         }
     }
 
@@ -61,7 +61,7 @@ public class PlayerController : MonoBehaviour
         return Mathf.Approximately(_directionalInput.x, _wallSide) && Mathf.Approximately(_directionalInput.y, 1);
     }
 
-    private void LerpRotate(Transform setter, float angle, float speed){
+    private void SlerpRotate(Transform setter, float angle, float speed){
         //rotates the object smoothly to a new angle
 
         Vector3 originalAngle = setter.eulerAngles;
@@ -91,11 +91,8 @@ public class PlayerController : MonoBehaviour
         SetGravity();
 
         WallInteraction();
-
-        _cayoteTime.Tick(Time.deltaTime);
-        if(_onGround){
-            _cayoteTime.Restart(cayoteTimeMax); 
-        }
+        if(!_onGround)
+            _cayoteTime.Tick(Time.deltaTime);
     }
 
     private void WallInteraction(){
@@ -138,6 +135,10 @@ public class PlayerController : MonoBehaviour
 
     public void SetOnGround(bool set){
         _onGround = set;
+        if (_onGround)
+        {
+            _cayoteTime.Restart(cayoteTimeMax); 
+        }
     }
 
     public void SetOnWall(int set){
