@@ -9,6 +9,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2ef02f7e613d4766a56a14c7eb7f5f80, type: 3}
-  m_Name: JumpEventChannel
+  m_Script: {fileID: 11500000, guid: 66c01a541a3245129adc4b3d3aa4e7e9, type: 3}
+  m_Name: OnWallEventChannel
   m_EditorClassIdentifier: 

@@ -1,4 +1,5 @@
 
+using System;
 using Events.Channels;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -9,8 +10,8 @@ namespace Events.Input
     [CreateAssetMenu(fileName = "InputReader", menuName = "Scriptable Objects/InputReader")]
     public class InputReader : ScriptableObject, PlayerInputActions.IPlayerActions, IInputReader
     {
-        [SerializeField] private Vector2EventChannelSO Move;
-        [SerializeField] private BoolEventChannelSO Jump;
+        public Vector2EventChannelSO Move;
+        public VoidEventChannelSO Jump;
         
         private PlayerInputActions _playerActions;
         
@@ -38,7 +39,9 @@ namespace Events.Input
         }
         public void OnJump(InputAction.CallbackContext context)
         {
-            Jump.RaiseEvent(true);
+            if(context.performed){
+                Jump.RaiseEvent(new EmptyEventArgs());
+            }
         }
     
         public void OnLook(InputAction.CallbackContext context)
