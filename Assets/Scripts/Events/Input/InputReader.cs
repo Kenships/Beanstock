@@ -10,8 +10,8 @@ namespace Events.Input
     [CreateAssetMenu(fileName = "InputReader", menuName = "Scriptable Objects/InputReader")]
     public class InputReader : ScriptableObject, PlayerInputActions.IPlayerActions, IInputReader
     {
-        public event Action<Vector2> Move;
-        public event Action Jump;
+        public Vector2EventChannelSO Move;
+        public VoidEventChannelSO Jump;
         
         private PlayerInputActions _playerActions;
         
@@ -35,12 +35,12 @@ namespace Events.Input
         }
         public void OnMove(InputAction.CallbackContext context)
         {
-            Move.Invoke(context.ReadValue<Vector2>());
+            Move.RaiseEvent(context.ReadValue<Vector2>());
         }
         public void OnJump(InputAction.CallbackContext context)
         {
             if(context.performed){
-                Jump.Invoke();
+                Jump.RaiseEvent(new EmptyEventArgs());
             }
         }
     

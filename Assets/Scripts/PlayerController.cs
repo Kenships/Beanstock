@@ -1,3 +1,4 @@
+using Events.Channels;
 using Events.Input;
 using UnityEngine;
 using Util;
@@ -27,8 +28,8 @@ public class PlayerController : MonoBehaviour
     }
 
     private void Start(){
-        inputReader.Jump += Jump;
-        inputReader.Move += SetDirection;
+        inputReader.Jump.onEventRaised += Jump;
+        inputReader.Move.onEventRaised += SetDirection;
     }
     
     private void Update()
@@ -71,7 +72,7 @@ public class PlayerController : MonoBehaviour
         setter.rotation = Quaternion.SlerpUnclamped(setter.rotation, to, Time.deltaTime * speed);
     }
     
-    private void Jump(){
+    private void Jump(EmptyEventArgs args){
         if(_cayoteTime.IsRunning){
             _rb.linearVelocity = new Vector2(_rb.linearVelocityX, jumpSpeed);
         }
