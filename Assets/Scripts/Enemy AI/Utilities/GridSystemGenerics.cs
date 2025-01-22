@@ -2,6 +2,7 @@ using System;
 using System.Numerics;
 using JetBrains.Annotations;
 using Unity.Collections.LowLevel.Unsafe;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class GridSystemGenerics<TGridObject>
@@ -14,7 +15,7 @@ public class GridSystemGenerics<TGridObject>
     private UnityEngine.Vector3 originPosition;
     private bool showDebug;
 
-    public GridSystemGenerics(int width, int height, float cellSize, UnityEngine.Vector3 originPosition, bool showDebug, Func<TGridObject> createGridObject)
+    public GridSystemGenerics(int width, int height, float cellSize, UnityEngine.Vector3 originPosition, bool showDebug, Func<GridSystemGenerics<TGridObject>, int, int, TGridObject> createGridObject)
     {
         this.width = width;
         this.height = height;
@@ -31,7 +32,7 @@ public class GridSystemGenerics<TGridObject>
             {
                 for (int y = 0; y < gridArray.GetLength(1); y++)
                 {
-                    gridArray[x, y] = createGridObject();
+                    gridArray[x, y] = createGridObject(this, x, y);
                 }
             }
 
@@ -100,6 +101,16 @@ public class GridSystemGenerics<TGridObject>
         int x,y;
         GetXY(worldPosition, out x, out y);
         return GetGridObject(x, y);
+    }
+
+    public int GetWidth()
+    {
+        return width;
+    }
+
+    public int GetHeight()
+    {
+        return height;
     }
 
 
