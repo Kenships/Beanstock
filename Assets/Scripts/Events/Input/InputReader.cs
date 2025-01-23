@@ -12,6 +12,7 @@ namespace Events.Input
     {
         public Vector2EventChannelSO Move;
         public VoidEventChannelSO Jump;
+        public VoidEventChannelSO Attack;
         
         private PlayerInputActions _playerActions;
         
@@ -51,7 +52,9 @@ namespace Events.Input
     
         public void OnAttack(InputAction.CallbackContext context)
         {
-            
+            if(context.performed){
+                Attack.RaiseEvent(new EmptyEventArgs());
+            }
         }
     
         public void OnInteract(InputAction.CallbackContext context)
