@@ -24,7 +24,7 @@ public class PlayerController : MonoBehaviour
     private Timer _cayoteTime;
     private State _playerState;
     private float attackCounter;
-    private const float attackSlowDown = 2;
+    private const float attackSlowDown = 1.5f;
     private const float turningSpeed = 2;
     private const float runningSpeed = 1;
     private const float fallGravity = 14;
@@ -53,9 +53,11 @@ public class PlayerController : MonoBehaviour
     {   
         switch(_playerState){
             case State.Moving:
+                gameObject.tag = "Player";
                 Move();
                 break;
             case State.Attacking:
+                gameObject.tag = "Player Attack";
                 Attack();
                 break;
         }
@@ -230,5 +232,11 @@ public class PlayerController : MonoBehaviour
 
     public void SetOnWall(int set){
         _wallSide = set;
+    }
+
+    private void OnCollisionEnter2D(Collision2D other) {
+        if(other.gameObject.tag == "Enemy" && _playerState == State.Attacking){
+            attackCounter = 0.1f;
+        }
     }
 }
