@@ -120,6 +120,7 @@ public class PlayerController : MonoBehaviour
     private void Jump(EmptyEventArgs args){
         if(_cayoteTime.IsRunning){
             _rb.linearVelocity = new Vector2(_rb.linearVelocityX, jumpSpeed);
+            _cayoteTime.ForceEnd();
         }
     }
 
