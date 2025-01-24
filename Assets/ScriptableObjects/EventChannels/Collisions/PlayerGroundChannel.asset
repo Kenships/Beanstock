@@ -10,5 +10,5 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a6adce2e3f6e4221a046ff0cc5d06ce2, type: 3}
-  m_Name: OnGroundEventChannel
+  m_Name: PlayerGroundChannel
   m_EditorClassIdentifier: 
