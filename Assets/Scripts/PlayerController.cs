@@ -240,4 +240,14 @@ public class PlayerController : MonoBehaviour
             attackCounter = 0.1f;
         }
     }
+
+    private void OnTriggerEnter2D(Collider2D other) {
+        if(other.gameObject.tag == "Enemy Attack"){
+            getHit();
+        }
+    }
+
+    void getHit(){
+        Debug.Log("ow!");
+    }
 }

@@ -107,7 +107,7 @@ MonoBehaviour:
   _groundLayer:
     serializedVersion: 2
     m_Bits: 8
-  _moveSpeed: 50
+  _moveSpeed: 30
   _climbSpeed: 10
   _jumpSpeed: 30
   _patrolPosition:
