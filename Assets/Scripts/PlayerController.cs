@@ -17,11 +17,15 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float attackSpeed;
     [SerializeField] private float attackLength;
     [SerializeField] private float attackRange;
+    [SerializeField] private GameObject slashEffect;
+    [SerializeField] private float invincibilityMax;
+    [SerializeField] private ParticleSystem hitEffect;
     private Vector3 _directionalInput;
     private bool _onGround;
     private Rigidbody2D _rb;
     private float _wallSide;
     private Timer _cayoteTime;
+    private float _invincibility;
     private State _playerState;
     private float attackCounter;
     private const float attackSlowDown = 1.5f;
@@ -65,6 +69,8 @@ public class PlayerController : MonoBehaviour
 
         SetSprite();
         SetGravity();
+
+        _invincibility-= Time.deltaTime;
     }
 
     private void SetSprite(){
@@ -238,16 +244,25 @@ public class PlayerController : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D other) {
         if(other.gameObject.tag == "Enemy" && _playerState == State.Attacking){
             attackCounter = 0.1f;
+            GameObject attackEffect = Instantiate(slashEffect, transform.position, Quaternion.identity);
+            attackEffect.transform.up = playerSprite.up;
+            TimeController.setTime(0.2f);
         }
     }
 
     private void OnTriggerEnter2D(Collider2D other) {
-        if(other.gameObject.tag == "Enemy Attack"){
-            getHit();
-        }
+        getHit(other.gameObject.tag);
     }
 
-    void getHit(){
-        Debug.Log("ow!");
+    private void OnParticleCollision(GameObject other) {
+        getHit(other.gameObject.tag);
+    }
+
+    void getHit(string tag){
+        if(tag == "Enemy Attack" && _invincibility < 0){
+            TimeController.setTime(0.03f);
+            _invincibility = invincibilityMax;
+            hitEffect.Play();
+        }
     }
 }
