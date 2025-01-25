@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Move: {fileID: 11400000, guid: 8c393c6b5d976434498c679587749ad4, type: 2}
   Jump: {fileID: 11400000, guid: 92167bdc4ddc4c3449a096574b85596c, type: 2}
+  Attack: {fileID: 11400000, guid: 26d9964a7c97f4470a8ecb190056fd5d, type: 2}

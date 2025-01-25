@@ -3,7 +3,11 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 3
-  tags: []
+  tags:
+  - Enemy
+  - Player Attack
+  - Enemy Attack
+  - Ground
   layers:
   - Default
   - TransparentFX
