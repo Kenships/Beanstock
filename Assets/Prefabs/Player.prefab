@@ -375,6 +375,7 @@ MonoBehaviour:
   attackSpeed: 50
   attackLength: 0.2
   attackRange: 12
+  enemiesInRadar: []
 --- !u!61 &2449040770975972606
 BoxCollider2D:
   m_ObjectHideFlags: 0

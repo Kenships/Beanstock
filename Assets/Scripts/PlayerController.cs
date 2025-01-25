@@ -26,7 +26,7 @@ public class PlayerController : MonoBehaviour
     private Timer _cayoteTime;
     private State _playerState;
     private float attackCounter;
-    private const float attackSlowDown = 1.5f;
+    private const float attackSlowDown = 1.3f;
     private const float turningSpeed = 2;
     private const float runningSpeed = 1;
     private const float fallGravity = 14;
@@ -133,7 +133,7 @@ public class PlayerController : MonoBehaviour
             {
                 Vector3 target = closestTarget.transform.position;
 
-                if(Vector3.Distance(transform.position, target) <= attackRange && target != Vector3.zero){
+                if(Vector3.Distance(transform.position, target) <= attackRange){
                     _playerState = State.Attacking;
                     attackCounter = attackLength;
                     playerSprite.up = AimAt(transform.position, target);
@@ -244,11 +244,11 @@ public class PlayerController : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D other) {
         if(other.gameObject.CompareTag("Enemy") && _playerState == State.Attacking){
-            attackCounter = 0.1f;
+            attackCounter = 0.06f;
         }
     }
 
-    private void OnColliderEnter2D(Collider2D other) {
+    private void OnTriggerEnter2D(Collider2D other) {
         if(other.gameObject.CompareTag("Enemy Attack")){
             GetHit();
         }
