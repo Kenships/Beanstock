@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Events.Channels;
 using Events.Input;
@@ -19,6 +20,15 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float attackSpeed;
     [SerializeField] private float attackLength;
     [SerializeField] private float attackRange;
+    [SerializeField] private GameObject attack;
+    [SerializeField] private ParticleSystem hitEffect;
+    [SerializeField] private ParticleSystem wallJumpEffect;
+    [SerializeField] private GameObject sliceEffect;
+    [SerializeField] private ParticleSystem wallRunEffect;
+
+
+    private float _wallRunTimer;
+    private ParticleSystem _attackEffect;
     private Vector3 _directionalInput;
     private bool _onGround;
     private Rigidbody2D _rb;
@@ -32,8 +42,13 @@ public class PlayerController : MonoBehaviour
     private const float fallGravity = 14;
     private const float riseGravity = 3;
     [SerializeField] List<GameObject> enemiesInRadar;
+    private float _invincibility;
+    [SerializeField] private float _invincibilityMax;
+
     private void Awake()
     {
+        sliceEffect.SetActive(false);
+        _attackEffect = attack.GetComponent<ParticleSystem>();
         inputReader.EnablePlayerActions();
         _rb = gameObject.GetComponent<Rigidbody2D>();
         _cayoteTime = new Timer(cayoteTimeMax);
@@ -68,6 +83,9 @@ public class PlayerController : MonoBehaviour
 
         SetSprite();
         SetGravity();
+
+        _invincibility -= Time.deltaTime;
+        _wallRunTimer -= Time.deltaTime;
     }
 
     private void SetSprite(){
@@ -86,11 +104,24 @@ public class PlayerController : MonoBehaviour
             else if(WallRunInput()){
                 //wallrunning
                 SlerpRotate(playerSprite, _wallSide * 90, 15);
+                _wallRunTimer = 0.03f;
             }
             else{
                 //sliding down wall
                 SlerpRotate(playerSprite, _wallSide * 10, 10);
             }
+        }
+
+        wallRunParticles();
+    }
+
+    void wallRunParticles(){
+        if(_wallRunTimer < 0 && wallRunEffect.isPlaying){
+            wallRunEffect.Stop();
+        }
+
+        if(_wallRunTimer > 0 && !wallRunEffect.isPlaying){
+            wallRunEffect.Play();
         }
     }
 
@@ -102,6 +133,9 @@ public class PlayerController : MonoBehaviour
         _rb.linearVelocity = playerSprite.up * attackSpeed;
         attackCounter -= Time.deltaTime;
 
+        if(attackCounter < 0.1f){
+            sliceEffect.SetActive(false);
+        }
 
         if(attackCounter < 0){
             _rb.linearVelocity /= attackSlowDown;
@@ -134,6 +168,8 @@ public class PlayerController : MonoBehaviour
                 Vector3 target = closestTarget.transform.position;
 
                 if(Vector3.Distance(transform.position, target) <= attackRange){
+                    //start attack
+                    sliceEffect.SetActive(true);
                     _playerState = State.Attacking;
                     attackCounter = attackLength;
                     playerSprite.up = AimAt(transform.position, target);
@@ -196,6 +232,7 @@ public class PlayerController : MonoBehaviour
             }
             else if(Mathf.Approximately(_directionalInput.x, -_wallSide) && Mathf.Approximately(_directionalInput.y, 1)){
                 //wall jump
+                wallJumpEffect.Play();
                 _rb.linearVelocity = new Vector2(_directionalInput.x * wallJumpSpeed.x, wallJumpSpeed.y);
             }
             else if(Mathf.Approximately(_directionalInput.x, _wallSide) && _rb.linearVelocityY < 0){
@@ -245,17 +282,28 @@ public class PlayerController : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D other) {
         if(other.gameObject.CompareTag("Enemy") && _playerState == State.Attacking){
             attackCounter = 0.06f;
+            _attackEffect.Play();
+            attack.transform.up = playerSprite.up;
+            TimeController.setTime(0.15f);
+            StartCoroutine(TimeController.freezeTime(0.005f));
         }
     }
 
     private void OnTriggerEnter2D(Collider2D other) {
-        if(other.gameObject.CompareTag("Enemy Attack")){
-            GetHit();
-        }
+        GetHit(other.tag);
     }
 
-    private void GetHit(){
-        Debug.Log("ow!");
+    private void OnParticleCollision(GameObject other) {
+        GetHit(other.tag);
+    }
+
+    private void GetHit(string tag){
+        if(_invincibility < 0 && tag == "Enemy Attack"){
+            hitEffect.Play();
+            //TimeController.setTime(0.05f);
+            StartCoroutine(TimeController.freezeTime(0.01f));
+            _invincibility = _invincibilityMax;
+        }
     }
 
     public void ProcessBogie(RadarInfo radarInfo)

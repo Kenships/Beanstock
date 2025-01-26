@@ -17,10 +17,13 @@ public class enemyGroundLogic : MonoBehaviour
     private int _patrolNum;
     [SerializeField] private float _detectionRange;
     [SerializeField] private float _chaseRange;
+    [SerializeField] private float _moveRange;
+    private Vector3 _originalPosition;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        _originalPosition = transform.position;
         _rb = gameObject.GetComponent<Rigidbody2D>();
     }
 
@@ -45,13 +48,13 @@ public class enemyGroundLogic : MonoBehaviour
                     }
                 }
 
-                if(Vector3.Distance(transform.position, _chaseTarget.position) < _detectionRange){
+                if(Vector3.Distance(transform.position, _chaseTarget.position) < _detectionRange && Vector3.Distance(transform.position, _originalPosition) < _moveRange){
                     _enemyState = State.Chasing;
                 }
                 break;
             case State.Chasing:
                 Move(_chaseTarget.position);
-                if(Vector3.Distance(transform.position, _chaseTarget.position) > _chaseRange){
+                if(Vector3.Distance(transform.position, _chaseTarget.position) > _chaseRange || Vector3.Distance(transform.position, _originalPosition) > _moveRange){
                     _enemyState = State.Patrolling;
                 }
 
