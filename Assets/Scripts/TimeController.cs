@@ -17,7 +17,6 @@ public class TimeController : MonoBehaviour
     }   
 
     public static IEnumerator freezeTime(float t){
-        Debug.Log("freeze!");
         Time.timeScale = 0.1f;
         yield return new WaitForSeconds(t);
         Time.timeScale = 1;

@@ -25,6 +25,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private ParticleSystem wallJumpEffect;
     [SerializeField] private GameObject sliceEffect;
     [SerializeField] private ParticleSystem wallRunEffect;
+    [SerializeField] List<GameObject> enemiesInRadar;
+    [SerializeField] private float _invincibilityMax;
 
 
     private float _wallRunTimer;
@@ -41,9 +43,9 @@ public class PlayerController : MonoBehaviour
     private const float runningSpeed = 1;
     private const float fallGravity = 14;
     private const float riseGravity = 3;
-    [SerializeField] List<GameObject> enemiesInRadar;
     private float _invincibility;
-    [SerializeField] private float _invincibilityMax;
+    public Transform _ziplineTransform;
+    [SerializeField] private float ziplineLaunchSpeed;
 
     private void Awake()
     {
@@ -64,7 +66,8 @@ public class PlayerController : MonoBehaviour
 
     private enum State{
         Moving,
-        Attacking
+        Attacking,
+        Ziplining
     }
     
     private void Update()
@@ -77,6 +80,9 @@ public class PlayerController : MonoBehaviour
             case State.Attacking:
                 gameObject.tag = "Player Attack";
                 Attack();
+                break;
+            case State.Ziplining:
+                transform.position = _ziplineTransform.position;
                 break;
         }
         //jittery camera
@@ -251,6 +257,9 @@ public class PlayerController : MonoBehaviour
             case State.Attacking:
                 _rb.gravityScale = 0;
                 break;
+            case State.Ziplining:
+                _rb.gravityScale = 0;
+                break;
         }
     }
 
@@ -291,6 +300,12 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other) {
         GetHit(other.tag);
+
+        if(other.tag == "Zipline"){
+            _playerState = State.Ziplining;
+            _ziplineTransform = other.transform;
+            other.GetComponent<Zipline>().startZip();
+        }
     }
 
     private void OnParticleCollision(GameObject other) {
@@ -350,5 +365,11 @@ public class PlayerController : MonoBehaviour
         }
         
         return true;
+    }
+
+    public void endZipline(Vector3 inputVelocity){
+        _rb.linearVelocity = new Vector2(inputVelocity.x, 10);
+        //_rb.linearVelocity = inputVelocity * ziplineLaunchSpeed;
+        _playerState = State.Moving;
     }
 }
