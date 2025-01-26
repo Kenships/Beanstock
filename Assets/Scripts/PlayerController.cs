@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Events.Channels;
 using Events.Input;
+using UnityEditor.U2D.Aseprite;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Util;
@@ -27,6 +28,12 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private ParticleSystem wallRunEffect;
     [SerializeField] List<GameObject> enemiesInRadar;
     [SerializeField] private float _invincibilityMax;
+    [SerializeField] private Transform axe;
+    [SerializeField] private SpriteRenderer axeSprite;
+    [SerializeField] private float axeSpingSpeed;
+
+    private const float _axeFollowSpeed = 50;
+    private const float _axeRotationSpeed = 300;
 
 
     private float _wallRunTimer;
@@ -46,6 +53,7 @@ public class PlayerController : MonoBehaviour
     private float _invincibility;
     public Transform _ziplineTransform;
     [SerializeField] private float ziplineLaunchSpeed;
+    private float direction;
 
     private void Awake()
     {
@@ -94,6 +102,10 @@ public class PlayerController : MonoBehaviour
         _wallRunTimer -= Time.deltaTime;
     }
 
+    private void FixedUpdate() {
+        setAxe();
+    }
+
     private void SetSprite(){
         //rotate player sprite based on their state
 
@@ -119,6 +131,20 @@ public class PlayerController : MonoBehaviour
         }
 
         wallRunParticles();
+    }
+
+    void setAxe(){
+        axe.position = Vector3.Lerp(axe.position, transform.position + new Vector3(_directionalInput.x * 0.2f, 0), _axeFollowSpeed * Time.deltaTime);
+
+        if(_playerState == State.Moving){
+            SlerpRotate(axe, _directionalInput.x * 30, _axeRotationSpeed * Time.deltaTime);
+        }
+        else if(_playerState == State.Attacking){
+            //SlerpRotate(axe, direction * -170, _axeRotationSpeed * Time.deltaTime);
+            axe.Rotate(0, 0, -axeSpingSpeed * direction * Time.deltaTime);
+        }
+
+        axeSprite.flipX =  direction == 1 ? false : true;
     }
 
     void wallRunParticles(){
@@ -227,6 +253,9 @@ public class PlayerController : MonoBehaviour
         WallInteraction();
         if(!_onGround)
             _cayoteTime.Tick(Time.deltaTime);
+
+        if(_directionalInput.x != 0)
+            direction = _directionalInput.x;
     }
 
     private void WallInteraction(){
