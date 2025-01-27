@@ -2,22 +2,25 @@ using System;
 using Unity.VisualScripting;
 using Events.Channels;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class Zipline : MonoBehaviour
 {
     [SerializeField] private Transform playerTransform;
     [SerializeField] private Transform point1;
     [SerializeField] private Transform point2;
-    [SerializeField] LineRenderer _vine;
+    [SerializeField] private LineRenderer vine;
     [SerializeField] private Vector3EventChannelSO endEvent;
-    private float _maxDist;
     [SerializeField] private Transform closestPoint;
-    [SerializeField] private Rigidbody2D _rb;
-    private State _ziplineState;
+    [SerializeField] private Rigidbody2D rb;
     [SerializeField] private float speed;
+    [SerializeField] private float startSpeed;
+    
+    private float _maxDist;
+    private State _ziplineState;
     private float _delayPeriod;
     private CircleCollider2D _hitBox;
-    [SerializeField] private float startSpeed;
+    
 
 
 
@@ -26,9 +29,9 @@ public class Zipline : MonoBehaviour
     {
         _hitBox = gameObject.GetComponent<CircleCollider2D>();
         playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
-        _vine.SetPosition(0, point1.position);
-        _vine.SetPosition(1, point2.position);
-        _maxDist = Vector3.Magnitude(getLineDirection());
+        vine.SetPosition(0, point1.position);
+        vine.SetPosition(1, point2.position);
+        _maxDist = Vector3.Magnitude(GetLineDirection());
         _ziplineState = State.Idle;
     }
 
@@ -44,19 +47,19 @@ public class Zipline : MonoBehaviour
         switch (_ziplineState){
             case State.Idle:
                 //got to closest position to player on line
-                closestPoint.position = findClosestPoint(point1.position, getLineDirection());
-                _rb.linearVelocity *= 0;
+                closestPoint.position = FindClosestPoint(point1.position, GetLineDirection());
+                rb.linearVelocity *= 0;
                 break;
             case State.Ziplining:
                 //move towards end point
-                _rb.linearVelocity += (Vector2)closestPoint.up * speed * Time.deltaTime;
+                rb.linearVelocity += (Vector2)closestPoint.up * (speed * Time.deltaTime);
                 break;
         }
 
         //aim at end point
         closestPoint.transform.up = new Vector3(closestPoint.position.x - point2.position.x, closestPoint.position.y - point2.position.y) * -1;
-        resetPosition(point1.position, point2.position, true);
-        resetPosition(point2.position, point1.position, false);
+        ResetPosition(point1.position, point2.position, true);
+        ResetPosition(point2.position, point1.position, false);
 
         //turn off hitbox once player leaves
         _delayPeriod -= Time.deltaTime;
@@ -69,30 +72,30 @@ public class Zipline : MonoBehaviour
         }
     }
 
-    private void resetPosition(Vector3 a, Vector3 b, bool endPoint){
+    private void ResetPosition(Vector3 a, Vector3 b, bool endPoint){
         //reset when at end points
         if(Vector3.Distance(closestPoint.position, a) >= _maxDist){
             closestPoint.position = b;
 
             //end zipline
             if(endPoint && _ziplineState == State.Ziplining){
-                end();
+                End();
             }
         }
     }
 
-    void end(){
+    private void End(){
         //finish zipline
         _ziplineState = State.Idle;
         _delayPeriod = 0.5f;
-        endEvent.RaiseEvent(_rb.linearVelocity);
+        endEvent.RaiseEvent(rb.linearVelocity);
     }
 
-    Vector3 getLineDirection(){
+    private Vector3 GetLineDirection(){
         return point2.position - point1.position;
     }
 
-    Vector3 findClosestPoint(Vector3 linePnt, Vector3 lineDir){
+    Vector3 FindClosestPoint(Vector3 linePnt, Vector3 lineDir){
 
         //get the closest point on the line
         lineDir = Vector3.Normalize(lineDir);
@@ -103,9 +106,9 @@ public class Zipline : MonoBehaviour
         return linePnt + lineDir * d;
     }
 
-    public void startZip(){
+    public void StartZip(){
         //starts when player touches the zip
         _ziplineState = State.Ziplining;
-        _rb.linearVelocity = (Vector2)closestPoint.up * startSpeed;
+        rb.linearVelocity = (Vector2)closestPoint.up * startSpeed;
     }
 }

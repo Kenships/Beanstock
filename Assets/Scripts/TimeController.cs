@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class TimeController : MonoBehaviour
 {
-    private const float returnRate = 40;
+    private const float ReturnRate = 40;
 
     // Update is called once per frame
     void Update()
@@ -12,11 +12,11 @@ public class TimeController : MonoBehaviour
         Time.fixedDeltaTime = Time.timeScale * 0.02f;
     }
 
-    public static void setTime(float t){
+    public static void SetTime(float t){
         Time.timeScale = t;
     }   
 
-    public static IEnumerator freezeTime(float t){
+    public static IEnumerator FreezeTime(float t){
         Time.timeScale = 0.1f;
         yield return new WaitForSeconds(t);
         Time.timeScale = 1;

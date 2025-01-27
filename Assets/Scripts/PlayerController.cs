@@ -346,7 +346,7 @@ public class PlayerController : MonoBehaviour
             _rb.linearVelocity = new Vector3(spinHitVelocity.x * _directionalInput.x, spinHitVelocity.y);
             _attackEffect.Play();
 
-            StartCoroutine(TimeController.freezeTime(0.006f));
+            StartCoroutine(TimeController.FreezeTime(0.006f));
 
             if(_playerState == State.Spinning){
                 if(_directionalInput.x == 0){
@@ -371,7 +371,7 @@ public class PlayerController : MonoBehaviour
         if(other.tag == "Zipline"){
             _playerState = State.Ziplining;
             _ziplineTransform = other.transform;
-            other.GetComponent<Zipline>().startZip();
+            other.GetComponent<Zipline>().StartZip();
         }
     }
 
@@ -383,7 +383,7 @@ public class PlayerController : MonoBehaviour
         if(_invincibility < 0 && tag == "Enemy Attack"){
             hitEffect.Play();
             //TimeController.setTime(0.05f);
-            StartCoroutine(TimeController.freezeTime(0.01f));
+            StartCoroutine(TimeController.FreezeTime(0.01f));
             _invincibility = _invincibilityMax;
         }
     }
