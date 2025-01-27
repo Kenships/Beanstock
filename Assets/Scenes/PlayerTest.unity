@@ -2577,10 +2577,10 @@ MonoBehaviour:
   playerTransform: {fileID: 1877762549}
   point1: {fileID: 2109934834}
   point2: {fileID: 1001042836}
-  _vine: {fileID: 816774918}
+  vine: {fileID: 816774918}
   endEvent: {fileID: 11400000, guid: 3798b35c3c77d44e2a367985bbb79712, type: 2}
   closestPoint: {fileID: 1344208875}
-  _rb: {fileID: 1344208877}
+  rb: {fileID: 1344208877}
   speed: 50
   startSpeed: 10
 --- !u!1 &1354406322
@@ -4112,7 +4112,7 @@ Transform:
   m_GameObject: {fileID: 2109934833}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -27.4, y: 32.8, z: 0}
+  m_LocalPosition: {x: -26.27, y: 24.36, z: 0}
   m_LocalScale: {x: 0.5, y: 0.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
