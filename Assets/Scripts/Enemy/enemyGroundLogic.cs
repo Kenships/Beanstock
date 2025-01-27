@@ -78,7 +78,7 @@ public class enemyGroundLogic : MonoBehaviour
         _rb.linearVelocity += new Vector2(_moveSpeed * _aimDirection, 0) * Time.deltaTime;
 
         //climb
-        if(transform.position.y < _aimPosition.y + 3 && _onWall){
+        if(transform.position.y < _aimPosition.y && _onWall){
             _rb.linearVelocity = new Vector2(_rb.linearVelocityX, _climbSpeed);
         }
 

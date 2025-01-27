@@ -31,6 +31,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Transform axe;
     [SerializeField] private SpriteRenderer axeSprite;
     [SerializeField] private float axeSpingSpeed;
+    [SerializeField] private Vector2 spinHitVelocity;
+    [SerializeField] private float spinSpeed;
 
     private const float _axeFollowSpeed = 50;
     private const float _axeRotationSpeed = 300;
@@ -75,7 +77,8 @@ public class PlayerController : MonoBehaviour
     private enum State{
         Moving,
         Attacking,
-        Ziplining
+        Ziplining,
+        Spinning
     }
     
     private void Update()
@@ -92,6 +95,10 @@ public class PlayerController : MonoBehaviour
             case State.Ziplining:
                 transform.position = _ziplineTransform.position;
                 break;
+            case State.Spinning:
+                gameObject.tag = "Player Attack";
+                Move();
+                break;
         }
         //jittery camera
 
@@ -104,6 +111,10 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate() {
         setAxe();
+
+        if(attackCounter < 0.1f){
+            sliceEffect.SetActive(false);
+        }
     }
 
     private void SetSprite(){
@@ -129,6 +140,10 @@ public class PlayerController : MonoBehaviour
                 SlerpRotate(playerSprite, _wallSide * 10, 10);
             }
         }
+        else if(_playerState == State.Spinning){
+            //spinning
+            playerSprite.Rotate(0, 0, spinSpeed * Time.deltaTime * direction);
+        }
 
         wallRunParticles();
     }
@@ -142,6 +157,9 @@ public class PlayerController : MonoBehaviour
         else if(_playerState == State.Attacking){
             //SlerpRotate(axe, direction * -170, _axeRotationSpeed * Time.deltaTime);
             axe.Rotate(0, 0, -axeSpingSpeed * direction * Time.deltaTime);
+        }
+        else if(_playerState == State.Spinning){
+            axe.Rotate(0, 0, spinSpeed * direction * Time.deltaTime);
         }
 
         axeSprite.flipX =  direction == 1 ? false : true;
@@ -164,10 +182,6 @@ public class PlayerController : MonoBehaviour
     private void Attack(){
         _rb.linearVelocity = playerSprite.up * attackSpeed;
         attackCounter -= Time.deltaTime;
-
-        if(attackCounter < 0.1f){
-            sliceEffect.SetActive(false);
-        }
 
         if(attackCounter < 0){
             _rb.linearVelocity /= attackSlowDown;
@@ -254,7 +268,7 @@ public class PlayerController : MonoBehaviour
         if(!_onGround)
             _cayoteTime.Tick(Time.deltaTime);
 
-        if(_directionalInput.x != 0)
+        if(_directionalInput.x != 0 && _playerState != State.Spinning)
             direction = _directionalInput.x;
     }
 
@@ -289,6 +303,9 @@ public class PlayerController : MonoBehaviour
             case State.Ziplining:
                 _rb.gravityScale = 0;
                 break;
+            case State.Spinning:
+                _rb.gravityScale = _rb.linearVelocityY > 2 ? riseGravity : fallGravity;
+                break;
         }
     }
 
@@ -310,20 +327,30 @@ public class PlayerController : MonoBehaviour
         if (_onGround)
         {
             _cayoteTime.Restart(cayoteTimeMax); 
+            if(_playerState == State.Spinning)
+                _playerState = State.Moving;
         }
     }
 
     public void SetOnWall(int set){
         _wallSide = set;
+
+        if(_playerState == State.Spinning && set != 0)
+            _playerState = State.Moving;
     }
 
     private void OnCollisionEnter2D(Collision2D other) {
-        if(other.gameObject.CompareTag("Enemy") && _playerState == State.Attacking){
-            attackCounter = 0.06f;
+        if(other.gameObject.CompareTag("Enemy") && gameObject.tag == "Player Attack"){
+            //hit enemy
+            //attackCounter = 0.06f;
+            _rb.linearVelocity = new Vector3(spinHitVelocity.x * _directionalInput.x, spinHitVelocity.y);
             _attackEffect.Play();
             attack.transform.up = playerSprite.up;
             TimeController.setTime(0.15f);
             StartCoroutine(TimeController.freezeTime(0.005f));
+
+            _playerState = State.Spinning;
+            attackCounter = 0;
         }
     }
 

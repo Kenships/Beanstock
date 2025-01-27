@@ -1566,7 +1566,7 @@ ParticleSystem:
     y:
       serializedVersion: 2
       minMaxState: 0
-      scalar: -20
+      scalar: -30
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -4882,7 +4882,7 @@ Transform:
   m_GameObject: {fileID: 7844349528616651921}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 26, y: 7.4, z: 0}
+  m_LocalPosition: {x: 26, y: 13.1, z: 0}
   m_LocalScale: {x: 1.5, y: 1.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -4964,10 +4964,10 @@ MonoBehaviour:
   _climbSpeed: 0
   _jumpSpeed: 0
   _patrolPosition:
-  - {x: 34.8, y: 7.4, z: 0}
-  - {x: 23, y: 7.4, z: 0}
-  _detectionRange: 13
-  _chaseRange: 13
+  - {x: 34.8, y: 13.1, z: 0}
+  - {x: 23, y: 13.1, z: 0}
+  _detectionRange: 20
+  _chaseRange: 20
   _moveRange: 10
 --- !u!50 &7429921976524661709
 Rigidbody2D:
