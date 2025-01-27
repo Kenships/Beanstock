@@ -1,3 +1,5 @@
+using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Video;
 
@@ -6,6 +8,12 @@ public class Archer : MonoBehaviour
     public Transform player;
     public float visionDistance;
     public Transform forwardTip;
+
+    public GameObject arrow;
+    public Transform bulletPos;
+    public float force;
+    private float timer;
+    private float bulletTimer;
 
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -20,7 +28,10 @@ public class Archer : MonoBehaviour
         if (Vector3.Distance(player.position, transform.position) < visionDistance)
         {
             LookAtPlayer();
+            Timer();
+            // doesn't reset timer when exiting range
         }
+
     }
 
     Vector3 GetDirectionToPlayer()
@@ -35,4 +46,22 @@ public class Archer : MonoBehaviour
         Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.forward);
         transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime * 5f);
     }
+
+    private void Timer()
+    {
+        timer += Time.deltaTime;
+        if (timer >= 2f)
+        {
+            timer = 0;
+            Shoot();
+        }
+    }
+
+    private void Shoot()
+    {
+        GameObject bullet = Instantiate(arrow, bulletPos.position, Quaternion.identity);    
+
+    }
+
+
 }
