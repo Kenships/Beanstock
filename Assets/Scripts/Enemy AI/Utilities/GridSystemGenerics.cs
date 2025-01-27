@@ -7,6 +7,14 @@ using UnityEngine;
 
 public class GridSystemGenerics<TGridObject>
 {
+    
+    public event EventHandler<OnGridObjectChangedEventArgs> OnGridObjectChanged;
+    public class OnGridObjectChangedEventArgs : EventArgs
+    {
+        public int x;
+        public int y;
+    }
+    
     private int width;
     private int height;
     private float cellSize;
@@ -50,20 +58,29 @@ public class GridSystemGenerics<TGridObject>
 
                 Debug.DrawLine(GetWorldPosition(0, height), GetWorldPosition(width, height), Color.white, 100f);
                 Debug.DrawLine(GetWorldPosition(width, 0), GetWorldPosition(width, height), Color.white, 100f);
+
+                OnGridObjectChanged += (object sender, OnGridObjectChangedEventArgs eventArgs) =>
+                {
+                    debugTextArray[eventArgs.x, eventArgs.y].text = gridArray[eventArgs.x, eventArgs.y]?.ToString();
+                };
             }
         }
     }
 
-    private UnityEngine.Vector3 GetWorldPosition(int x, int y)
+    public UnityEngine.Vector3 GetWorldPosition(int x, int y)
     {
         return new UnityEngine.Vector3(x,y) * cellSize + originPosition;
     }
 
-    private void GetXY(UnityEngine.Vector3 worldPosition, out int x, out int y)
+    public void GetXY(UnityEngine.Vector3 worldPosition, out int x, out int y)
     {
         x = Mathf.FloorToInt((worldPosition - originPosition).x / cellSize);
         y = Mathf.FloorToInt((worldPosition - originPosition).y / cellSize);
 
+    }
+    
+    public void TriggerGridObjectChanged(int x, int y) {
+        if (OnGridObjectChanged != null) OnGridObjectChanged(this, new OnGridObjectChangedEventArgs { x = x, y = y });
     }
     
     public void SetGridObject(int x, int y, TGridObject value)
@@ -73,8 +90,10 @@ public class GridSystemGenerics<TGridObject>
         {
             gridArray[x, y] = value;
             debugTextArray[x,y].text = gridArray[x,y].ToString();
+            if (OnGridObjectChanged != null) OnGridObjectChanged(this, new OnGridObjectChangedEventArgs { x = x, y = y });
         }
     }
+
 
     public void SetGridObject (UnityEngine.Vector3 worldPosition, TGridObject value)
     {
@@ -111,6 +130,11 @@ public class GridSystemGenerics<TGridObject>
     public int GetHeight()
     {
         return height;
+    }
+
+    public int GetCellSize()
+    {
+        return (int)cellSize;
     }
 
 

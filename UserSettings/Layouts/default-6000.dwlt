@@ -301,7 +301,7 @@ MonoBehaviour:
   m_Pos:
     serializedVersion: 2
     x: 0
-    y: 567.5
+    y: 24
     width: 385
     height: 291.5
   m_SerializedDataModeController:
@@ -318,7 +318,7 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: ea740000
+      m_SelectedIDs: 
       m_LastClickedID: 0
       m_ExpandedIDs: 1afaffff
       m_RenameOverlay:
@@ -367,7 +367,7 @@ MonoBehaviour:
   m_Pos:
     serializedVersion: 2
     x: 0
-    y: 101
+    y: 24
     width: 1172
     height: 440.5
   m_SerializedDataModeController:
@@ -1038,7 +1038,7 @@ MonoBehaviour:
   m_Position:
     m_Target: {x: 14.822909, y: 22.964787, z: -0.18523534}
     speed: 2
-    m_Value: {x: -2.4753973, y: 1.8427873, z: -10.023341}
+    m_Value: {x: 14.822909, y: 22.964787, z: -0.18523534}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -1090,7 +1090,7 @@ MonoBehaviour:
   m_Size:
     m_Target: 28.523638
     speed: 2
-    m_Value: 14.458519
+    m_Value: 28.523638
   m_Ortho:
     m_Target: 1
     speed: 2
@@ -1243,8 +1243,8 @@ MonoBehaviour:
     m_TextWithWhitespace: "Project\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 386
-    y: 567.5
+    x: 387
+    y: 24
     width: 785
     height: 291.5
   m_SerializedDataModeController:
@@ -1287,7 +1287,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 82b30000
     m_LastClickedID: 45954
-    m_ExpandedIDs: 00000000
+    m_ExpandedIDs: 00000000c8b40000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1316,7 +1316,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: ffffffff0000000056b70000
+    m_ExpandedIDs: 00000000c8b40000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1431,8 +1431,8 @@ MonoBehaviour:
     m_TextWithWhitespace: "Inspector\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 1173
-    y: 101
+    x: 1174
+    y: 24
     width: 296
     height: 758
   m_SerializedDataModeController:
