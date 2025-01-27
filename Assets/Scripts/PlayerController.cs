@@ -176,7 +176,7 @@ public class PlayerController : MonoBehaviour
         wallRunEffect.Play();
     }
 
-    public void StopWallRunningParticles()
+    private void StopWallRunningParticles()
     {
         if(!wallRunEffect.isPlaying) return;
         wallRunEffect.Stop();
