@@ -304,7 +304,7 @@ public class PlayerController : MonoBehaviour
                 _rb.gravityScale = 0;
                 break;
             case State.Spinning:
-                _rb.gravityScale = _rb.linearVelocityY > 2 ? riseGravity : fallGravity;
+                _rb.gravityScale = _rb.linearVelocityY > 2 ? riseGravity : fallGravity + 5;
                 break;
         }
     }
@@ -342,14 +342,25 @@ public class PlayerController : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D other) {
         if(other.gameObject.CompareTag("Enemy") && gameObject.tag == "Player Attack"){
             //hit enemy
-            //attackCounter = 0.06f;
+
             _rb.linearVelocity = new Vector3(spinHitVelocity.x * _directionalInput.x, spinHitVelocity.y);
             _attackEffect.Play();
-            attack.transform.up = playerSprite.up;
-            TimeController.setTime(0.15f);
-            StartCoroutine(TimeController.freezeTime(0.005f));
 
-            _playerState = State.Spinning;
+            StartCoroutine(TimeController.freezeTime(0.006f));
+
+            if(_playerState == State.Spinning){
+                if(_directionalInput.x == 0){
+                    attack.transform.up = Vector3.down;
+                }
+                else{
+                    attack.transform.eulerAngles = new Vector3(0, 0, _directionalInput.x * -210);
+                }
+            }
+            else{
+                attack.transform.up = playerSprite.up;
+                _playerState = State.Spinning;
+            }
+
             attackCounter = 0;
         }
     }

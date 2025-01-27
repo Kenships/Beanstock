@@ -10,6 +10,9 @@ public class EnemyHealth : MonoBehaviour
     private const float respawnTime = 2;
     [SerializeField] private SpriteRenderer sprite;
     [SerializeField] private GameObject respawn;
+    private const float _flashTime = 0.075f;
+    [SerializeField ]private Material normal;
+    [SerializeField] private Material flash;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -24,7 +27,19 @@ public class EnemyHealth : MonoBehaviour
             if(_health <= 0){
                 Die();
             }
+            else{
+                StartCoroutine(getHit());
+            }
         }
+    }
+
+    IEnumerator getHit(){
+        Color originalColor = sprite.color;
+        sprite.material = flash;
+        sprite.color = Color.white;
+        yield return new WaitForSeconds(_flashTime);
+        sprite.color = originalColor;
+        sprite.material = normal;
     }
 
     void Die(){
