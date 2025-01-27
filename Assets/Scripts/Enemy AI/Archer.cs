@@ -11,10 +11,7 @@ public class Archer : MonoBehaviour
 
     public GameObject arrow;
     public Transform bulletPos;
-    public float force;
     private float timer;
-    private float bulletTimer;
-
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
