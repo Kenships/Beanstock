@@ -3494,7 +3494,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1877762554}
         m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
-        m_MethodName: endZipline
+        m_MethodName: EndZipline
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

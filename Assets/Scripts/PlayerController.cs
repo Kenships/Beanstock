@@ -38,13 +38,15 @@ public class PlayerController : MonoBehaviour
     private const float _axeRotationSpeed = 300;
 
 
-    private float _wallRunTimer;
+    
     private ParticleSystem _attackEffect;
     private Vector3 _directionalInput;
     private bool _onGround;
     private Rigidbody2D _rb;
     private float _wallSide;
+    private Timer _wallRunTimer;
     private Timer _cayoteTime;
+    private Timer _invincibility;
     private State _playerState;
     private float attackCounter;
     private const float attackSlowDown = 1.3f;
@@ -52,7 +54,6 @@ public class PlayerController : MonoBehaviour
     private const float runningSpeed = 1;
     private const float fallGravity = 14;
     private const float riseGravity = 3;
-    private float _invincibility;
     public Transform _ziplineTransform;
     [SerializeField] private float ziplineLaunchSpeed;
     private float direction;
@@ -64,6 +65,9 @@ public class PlayerController : MonoBehaviour
         inputReader.EnablePlayerActions();
         _rb = gameObject.GetComponent<Rigidbody2D>();
         _cayoteTime = new Timer(cayoteTimeMax);
+        //what the heck is this number
+        _wallRunTimer = new Timer(0.03f);
+        _invincibility = new Timer(_invincibilityMax);
         enemiesInRadar = new List<GameObject>();
         _playerState = State.Moving;
     }
@@ -72,6 +76,8 @@ public class PlayerController : MonoBehaviour
         inputReader.Jump.onEventRaised += Jump;
         inputReader.Move.onEventRaised += SetDirection;
         inputReader.Attack.onEventRaised += AttackAction;
+        _wallRunTimer.OnTimerStart += StartWallRunningParticles;
+        _wallRunTimer.OnTimerEnd += StopWallRunningParticles;
     }
 
     private enum State{
@@ -105,12 +111,12 @@ public class PlayerController : MonoBehaviour
         SetSprite();
         SetGravity();
 
-        _invincibility -= Time.deltaTime;
-        _wallRunTimer -= Time.deltaTime;
+        _invincibility.Tick(Time.deltaTime);
+        _wallRunTimer.Tick(Time.deltaTime);
     }
 
     private void FixedUpdate() {
-        setAxe();
+        SetAxe();
 
         if(attackCounter < 0.1f){
             sliceEffect.SetActive(false);
@@ -133,7 +139,7 @@ public class PlayerController : MonoBehaviour
             else if(WallRunInput()){
                 //wallrunning
                 SlerpRotate(playerSprite, _wallSide * 90, 15);
-                _wallRunTimer = 0.03f;
+                _wallRunTimer.Restart();
             }
             else{
                 //sliding down wall
@@ -144,11 +150,9 @@ public class PlayerController : MonoBehaviour
             //spinning
             playerSprite.Rotate(0, 0, spinSpeed * Time.deltaTime * direction);
         }
-
-        wallRunParticles();
     }
 
-    void setAxe(){
+    private void SetAxe(){
         axe.position = Vector3.Lerp(axe.position, transform.position + new Vector3(_directionalInput.x * 0.2f, 0), _axeFollowSpeed * Time.deltaTime);
 
         if(_playerState == State.Moving){
@@ -165,14 +169,23 @@ public class PlayerController : MonoBehaviour
         axeSprite.flipX =  direction == 1 ? false : true;
     }
 
-    void wallRunParticles(){
-        if(_wallRunTimer < 0 && wallRunEffect.isPlaying){
-            wallRunEffect.Stop();
-        }
+    private void StartWallRunningParticles()
+    {
+        wallRunEffect.Play();
+    }
 
-        if(_wallRunTimer > 0 && !wallRunEffect.isPlaying){
-            wallRunEffect.Play();
-        }
+    public void StopWallRunningParticles()
+    {
+        wallRunEffect.Stop();
+    }
+    private void WallRunParticles(){
+        // if(_wallRunTimer < 0 && wallRunEffect.isPlaying){
+        //     wallRunEffect.Stop();
+        // }
+        //
+        // if(_wallRunTimer > 0 && !wallRunEffect.isPlaying){
+        //     wallRunEffect.Play();
+        // }
     }
 
     private bool WallRunInput(){
@@ -380,11 +393,11 @@ public class PlayerController : MonoBehaviour
     }
 
     private void GetHit(string tag){
-        if(_invincibility < 0 && tag == "Enemy Attack"){
+        if(!_invincibility.IsRunning && tag == "Enemy Attack"){
             hitEffect.Play();
             //TimeController.setTime(0.05f);
             StartCoroutine(TimeController.FreezeTime(0.01f));
-            _invincibility = _invincibilityMax;
+            _invincibility.Restart();
         }
     }
 
@@ -434,7 +447,7 @@ public class PlayerController : MonoBehaviour
         return true;
     }
 
-    public void endZipline(Vector3 inputVelocity){
+    public void EndZipline(Vector3 inputVelocity){
         _rb.linearVelocity = new Vector2(inputVelocity.x, 10);
         //_rb.linearVelocity = inputVelocity * ziplineLaunchSpeed;
         _playerState = State.Moving;
