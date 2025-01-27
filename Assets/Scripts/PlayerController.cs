@@ -171,23 +171,16 @@ public class PlayerController : MonoBehaviour
 
     private void StartWallRunningParticles()
     {
+        if(wallRunEffect.isPlaying) return;
+        
         wallRunEffect.Play();
     }
 
     public void StopWallRunningParticles()
     {
+        if(!wallRunEffect.isPlaying) return;
         wallRunEffect.Stop();
     }
-    private void WallRunParticles(){
-        // if(_wallRunTimer < 0 && wallRunEffect.isPlaying){
-        //     wallRunEffect.Stop();
-        // }
-        //
-        // if(_wallRunTimer > 0 && !wallRunEffect.isPlaying){
-        //     wallRunEffect.Play();
-        // }
-    }
-
     private bool WallRunInput(){
         return Mathf.Approximately(_directionalInput.x, _wallSide) && Mathf.Approximately(_directionalInput.y, 1);
     }
