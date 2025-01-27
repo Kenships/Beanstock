@@ -3,13 +3,13 @@ using System.Threading;
 using UnityEditor.Callbacks;
 using UnityEngine;
 
-public class ProjectileScript : MonoBehaviour
+public class ProjectileScriptMagic : MonoBehaviour
 {
     public float force;
+    public GameObject areaOfEffect;
     private GameObject player;
     private Rigidbody2D rb;
     private float timer;
-
 
     private void Start()
     {
@@ -36,6 +36,14 @@ public class ProjectileScript : MonoBehaviour
         timer += Time.deltaTime;
         if (timer >= 5f)
         {
+            Destroy(gameObject);
+        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D other) {
+        if (other.gameObject.layer == 3)
+        {
+            Instantiate(areaOfEffect, transform.position, other.transform.rotation);
             Destroy(gameObject);
         }
     }
