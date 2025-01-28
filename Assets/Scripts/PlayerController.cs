@@ -48,10 +48,11 @@ public class PlayerController : MonoBehaviour
     private State _playerState;
     private float _attackCounter;
     private const float AttackSlowDown = 1.3f;
-    private const float TurningSpeed = 2;
-    private const float RunningSpeed = 1;
-    private const float FallGravity = 14;
-    private const float RiseGravity = 3;
+    private const float TurningSpeed = 2f;
+    private const float RunningSpeed = 1f;
+    private const float FallGravity = 14f;
+    private const float RiseGravity = 3f;
+    private const float WallRunLingerTime = 0.03f;
     private float _direction;
 
     private void Awake()
@@ -62,7 +63,7 @@ public class PlayerController : MonoBehaviour
         _rb = gameObject.GetComponent<Rigidbody2D>();
         _cayoteTime = new Timer(cayoteTimeMax);
         //what the heck is this number
-        _wallRunTimer = new Timer(0.03f);
+        _wallRunTimer = new Timer(WallRunLingerTime);
         _invincibility = new Timer(invincibilityMax);
         enemiesInRadar = new List<GameObject>();
         _playerState = State.Moving;
