@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 namespace Util
 {
@@ -9,20 +10,29 @@ namespace Util
         public float PreviousDuration { get; private set; }
 
         public event Action OnTimerEnd;
+        public event Action OnTimerStart;
         
         public bool IsRunning {get; private set;}
+
+        private bool _isStarted;
 
         public Timer(float duration)
         {
             RemainingSeconds = duration;
             PreviousDuration = duration;
             IsRunning = true;
+            _isStarted = true;
         }
 
         public void Tick(float deltaTime)
         {
             if (RemainingSeconds == 0f) return;
-
+            if (_isStarted)
+            {
+                OnTimerStart?.Invoke();
+                _isStarted = false;
+            }
+            
             RemainingSeconds -= deltaTime;
 
             CheckForEnd();
@@ -37,6 +47,7 @@ namespace Util
         {
             RemainingSeconds = duration;
             IsRunning = true;
+            _isStarted = true;
         }
 
         public void ForceEnd()
