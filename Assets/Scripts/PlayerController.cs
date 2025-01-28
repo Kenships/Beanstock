@@ -28,31 +28,29 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float invincibilityMax;
     [SerializeField] private Transform axe;
     [SerializeField] private SpriteRenderer axeSprite;
-    [SerializeField] private float axeSpingSpeed;
+    [SerializeField] private float axeSpinningSpeed;
     [SerializeField] private Vector2 spinHitVelocity;
     [SerializeField] private float spinSpeed;
 
     private const float AxeFollowSpeed = 50;
     private const float AxeRotationSpeed = 300;
-
-
-    
-    private ParticleSystem _attackEffect;
-    private Vector3 _directionalInput;
-    private bool _onGround;
-    private Rigidbody2D _rb;
-    private float _wallSide;
-    private Timer _wallRunTimer;
-    private Timer _cayoteTime;
-    private Timer _invincibility;
-    private State _playerState;
-    private float _attackCounter;
     private const float AttackSlowDown = 1.3f;
     private const float TurningSpeed = 2f;
     private const float RunningSpeed = 1f;
     private const float FallGravity = 14f;
     private const float RiseGravity = 3f;
     private const float WallRunLingerTime = 0.03f;
+    
+    private State _playerState;
+    private ParticleSystem _attackEffect;
+    private Vector3 _directionalInput;
+    private Rigidbody2D _rb;
+    private Timer _wallRunTimer;
+    private Timer _cayoteTime;
+    private Timer _invincibility;
+    private bool _onGround;
+    private float _wallSide;
+    private float _attackCounter;
     private float _direction;
 
     private void Awake()
@@ -62,7 +60,6 @@ public class PlayerController : MonoBehaviour
         inputReader.EnablePlayerActions();
         _rb = gameObject.GetComponent<Rigidbody2D>();
         _cayoteTime = new Timer(cayoteTimeMax);
-        //what the heck is this number
         _wallRunTimer = new Timer(WallRunLingerTime);
         _invincibility = new Timer(invincibilityMax);
         enemiesInRadar = new List<GameObject>();
@@ -154,7 +151,7 @@ public class PlayerController : MonoBehaviour
         }
         else if(_playerState == State.Attacking){
             //SlerpRotate(axe, direction * -170, _axeRotationSpeed * Time.deltaTime);
-            axe.Rotate(0, 0, -axeSpingSpeed * _direction * Time.deltaTime);
+            axe.Rotate(0, 0, -axeSpinningSpeed * _direction * Time.deltaTime);
         }
         else if(_playerState == State.Spinning){
             axe.Rotate(0, 0, spinSpeed * _direction * Time.deltaTime);
@@ -218,14 +215,14 @@ public class PlayerController : MonoBehaviour
                     sliceEffect.SetActive(true);
                     _playerState = State.Attacking;
                     _attackCounter = attackLength;
-                    playerSprite.up = AimAt(transform.position, target);
+                    playerSprite.up = GetAimPosition(transform.position, target);
                 }
             }
             
         }
     }
 
-    private Vector3 AimAt(Vector3 a, Vector3 b){
+    private Vector3 GetAimPosition(Vector3 a, Vector3 b){
         return new Vector3(a.x - b.x, a.y - b.y) * -1;
     }
 
