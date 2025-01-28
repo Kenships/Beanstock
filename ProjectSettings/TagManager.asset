@@ -3,7 +3,12 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 3
-  tags: []
+  tags:
+  - Enemy
+  - Player Attack
+  - Enemy Attack
+  - Ground
+  - Zipline
   layers:
   - Default
   - TransparentFX
@@ -12,8 +17,8 @@ TagManager:
   - Water
   - UI
   - Ground Check
-  - 
-  - 
+  - Enemy Attack
+  - Radar
   - 
   - 
   - 
