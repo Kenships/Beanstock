@@ -6,6 +6,7 @@ using UnityEngine;
 public class ProjectileScript : MonoBehaviour
 {
     public float force;
+    public string playerName;
     private GameObject player;
     private Rigidbody2D rb;
     private float timer;
@@ -14,7 +15,7 @@ public class ProjectileScript : MonoBehaviour
     private void Start()
     {
         // shoot towards player
-        player = GameObject.Find("Player");
+        player = GameObject.Find(playerName);
         UnityEngine.Vector3 direction = player.transform.position - transform.position;
         rb = GetComponent<Rigidbody2D>();
         rb.linearVelocity = new UnityEngine.Vector2(direction.x, direction.y).normalized * force;
