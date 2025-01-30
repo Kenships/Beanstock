@@ -17,6 +17,11 @@ public class EnemyHealth : MonoBehaviour
     private Rigidbody2D _rb;
     [SerializeField] private float hitSpeed;
     [SerializeField] private float hitDrag;
+    private Color originalColor;
+
+    private void Awake() {
+        originalColor = sprite.color;
+    }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -24,6 +29,11 @@ public class EnemyHealth : MonoBehaviour
         _health = maxHealth;
         originalPosition = transform.position;
         _rb = gameObject.GetComponent<Rigidbody2D>();
+    }
+
+    private void OnEnable() {
+        sprite.color = originalColor;
+        sprite.material = normal;
     }
 
     private void OnCollisionEnter2D(Collision2D other) {
@@ -43,9 +53,8 @@ public class EnemyHealth : MonoBehaviour
         transform.up = GetAimPosition(transform.position, playerPosition) * -1;
         _rb.linearVelocity = transform.up * hitSpeed;
         transform.up = Vector3.zero;
-        //end of gethit
+        //end of knockback
 
-        Color originalColor = sprite.color;
         sprite.material = flash;
         sprite.color = Color.white;
 

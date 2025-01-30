@@ -30,8 +30,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Transform axe;
     [SerializeField] private SpriteRenderer axeSprite;
     [SerializeField] private float axeSpinningSpeed;
-    [SerializeField] private Vector2 spinHitVelocity;
-    [SerializeField] private float spinSpeed;
     [SerializeField] private float shotSpeed;
     [SerializeField] private ParticleSystem shootEffect;
     [SerializeField] private Transform shotTransform;
@@ -80,8 +78,7 @@ public class PlayerController : MonoBehaviour
     private enum State{
         Moving,
         Attacking,
-        Ziplining,
-        Spinning
+        Ziplining
     }
     
     private void Update()
@@ -98,11 +95,6 @@ public class PlayerController : MonoBehaviour
                 break;
             case State.Ziplining:
                 break;
-            case State.Spinning:
-                gameObject.tag = "Player Attack";
-                SetSpinningSpriteRotation();
-                Move();
-                break;
         }
         //jittery camera
         SetGravity();
@@ -112,11 +104,6 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate() {
         SetAxe();
-    }
-
-    private void SetSpinningSpriteRotation()
-    {
-        playerSprite.Rotate(0, 0, spinSpeed * Time.deltaTime * _direction);
     }
 
     private void SetRunningSpriteRotation()
@@ -150,9 +137,6 @@ public class PlayerController : MonoBehaviour
         else if(_playerState == State.Attacking){
             //SlerpRotate(axe, direction * -170, _axeRotationSpeed * Time.deltaTime);
             axe.Rotate(0, 0, -axeSpinningSpeed * _direction * Time.deltaTime);
-        }
-        else if(_playerState == State.Spinning){
-            axe.Rotate(0, 0, spinSpeed * _direction * Time.deltaTime);
         }
 
         axeSprite.flipX =  (int) _direction != 1;
@@ -255,7 +239,7 @@ public class PlayerController : MonoBehaviour
         if(!_onGround)
             _cayoteTime.Tick(Time.deltaTime);
 
-        if(_directionalInput.x != 0 && _playerState != State.Spinning)
+        if(_directionalInput.x != 0)
             _direction = _directionalInput.x;
     }
 
@@ -290,9 +274,6 @@ public class PlayerController : MonoBehaviour
             case State.Ziplining:
                 _rb.gravityScale = 0;
                 break;
-            case State.Spinning:
-                _rb.gravityScale = _rb.linearVelocityY > 2 ? RiseGravity : FallGravity + 5;
-                break;
         }
     }
 
@@ -314,16 +295,11 @@ public class PlayerController : MonoBehaviour
         if (_onGround)
         {
             _cayoteTime.Restart(cayoteTimeMax); 
-            if(_playerState == State.Spinning)
-                _playerState = State.Moving;
         }
     }
 
     public void SetOnWall(int set){
         _wallSide = set;
-
-        if(_playerState == State.Spinning && set != 0)
-            _playerState = State.Moving;
     }
 
     private void OnCollisionEnter2D(Collision2D other) {
@@ -350,6 +326,8 @@ public class PlayerController : MonoBehaviour
     }
 
     private IEnumerator invincible(float time){
+        //this switches the players layer, so it doesnt collide with attacks, enemies or ziplines
+        //but can still collide with the ground
         gameObject.layer = LayerMask.NameToLayer("Invincible");
         yield return new WaitForSeconds(time);
         gameObject.layer = LayerMask.NameToLayer("Default");
@@ -376,7 +354,7 @@ public class PlayerController : MonoBehaviour
         if(otherTag == "Enemy Attack"){
             hitEffect.Play();
             StartCoroutine(TimeController.FreezeTime(0.01f));
-            StartCoroutine(invincible(1.5f));
+            StartCoroutine(invincible(0.5f));
         }
     }
 
@@ -427,8 +405,8 @@ public class PlayerController : MonoBehaviour
     }
 
     public void EndZipline(Vector3 inputVelocity){
-        _rb.linearVelocity = new Vector2(inputVelocity.x, 10);
-        //_rb.linearVelocity = inputVelocity * ziplineLaunchSpeed;
+        _rb.linearVelocity = new Vector2(inputVelocity.x, 30);
         _playerState = State.Moving;
+        invincible(0.1f);
     }
 }

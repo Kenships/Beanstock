@@ -18,8 +18,7 @@ public class Zipline : MonoBehaviour
     
     private float _maxDist;
     private State _ziplineState;
-    private float _delayPeriod;
-    private CircleCollider2D _hitBox;
+    //private CircleCollider2D _hitBox;
     
 
 
@@ -27,7 +26,7 @@ public class Zipline : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        _hitBox = gameObject.GetComponent<CircleCollider2D>();
+        //_hitBox = gameObject.GetComponent<CircleCollider2D>();
         playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
         vine.SetPosition(0, point1.position);
         vine.SetPosition(1, point2.position);
@@ -42,7 +41,7 @@ public class Zipline : MonoBehaviour
     }
 
     // Update is called once per frame
-    void FixedUpdate()
+    void Update()
     {
         switch (_ziplineState){
             case State.Idle:
@@ -53,6 +52,7 @@ public class Zipline : MonoBehaviour
             case State.Ziplining:
                 //move towards end point
                 rb.linearVelocity += (Vector2)closestPoint.up * (speed * Time.deltaTime);
+                playerTransform.position = closestPoint.position;
                 break;
         }
 
@@ -60,16 +60,6 @@ public class Zipline : MonoBehaviour
         closestPoint.transform.up = new Vector3(closestPoint.position.x - point2.position.x, closestPoint.position.y - point2.position.y) * -1;
         ResetPosition(point1.position, point2.position, true);
         ResetPosition(point2.position, point1.position, false);
-
-        //turn off hitbox once player leaves
-        _delayPeriod -= Time.deltaTime;
-
-        if(_delayPeriod > 0 || _ziplineState == State.Ziplining){
-            _hitBox.enabled = false;
-        }
-        else{
-            _hitBox.enabled = true;
-        }
     }
 
     private void ResetPosition(Vector3 a, Vector3 b, bool endPoint){
@@ -87,7 +77,6 @@ public class Zipline : MonoBehaviour
     private void End(){
         //finish zipline
         _ziplineState = State.Idle;
-        _delayPeriod = 0.5f;
         endEvent.RaiseEvent(rb.linearVelocity);
     }
 
@@ -108,6 +97,7 @@ public class Zipline : MonoBehaviour
 
     public void StartZip(){
         //starts when player touches the zip
+        
         _ziplineState = State.Ziplining;
         rb.linearVelocity = (Vector2)closestPoint.up * startSpeed;
     }
