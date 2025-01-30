@@ -20,17 +20,17 @@ namespace Util
         {
             RemainingSeconds = duration;
             PreviousDuration = duration;
-            IsRunning = true;
-            _isStarted = true;
+            IsRunning = duration != 0f;
         }
 
         public void Tick(float deltaTime)
         {
             if (RemainingSeconds == 0f) return;
-            if (_isStarted)
+            
+            if (!_isStarted)
             {
                 OnTimerStart?.Invoke();
-                _isStarted = false;
+                _isStarted = true;
             }
             
             RemainingSeconds -= deltaTime;
@@ -45,9 +45,10 @@ namespace Util
 
         public void Restart(float duration)
         {
+            PreviousDuration = duration;
             RemainingSeconds = duration;
-            IsRunning = true;
-            _isStarted = true;
+            IsRunning = duration != 0;
+            _isStarted = false;
         }
 
         public void ForceEnd()

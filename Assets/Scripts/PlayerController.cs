@@ -24,13 +24,14 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private ParticleSystem wallJumpEffect;
     [SerializeField] private GameObject sliceEffect;
     [SerializeField] private ParticleSystem wallRunEffect;
-    [SerializeField] List<GameObject> enemiesInRadar;
     [SerializeField] private float invincibilityMax;
     [SerializeField] private Transform axe;
     [SerializeField] private SpriteRenderer axeSprite;
     [SerializeField] private float axeSpinningSpeed;
     [SerializeField] private Vector2 spinHitVelocity;
     [SerializeField] private float spinSpeed;
+    [SerializeField] List<GameObject> enemiesInRadar;
+    
 
     private const float AxeFollowSpeed = 50;
     private const float AxeRotationSpeed = 300;
@@ -135,7 +136,7 @@ public class PlayerController : MonoBehaviour
         else if(WallRunInput()){
             //wallrunning
             SlerpRotate(playerSprite, _wallSide * 90, 15);
-            _wallRunTimer.Restart();
+            _wallRunTimer.Restart(WallRunLingerTime);
         }
         else{
             //sliding down wall
@@ -336,7 +337,7 @@ public class PlayerController : MonoBehaviour
             _attackCounter = 0;
         }
     }
-
+    
     private void OnTriggerEnter2D(Collider2D other) {
         GetHit(other.tag);
 
@@ -355,7 +356,7 @@ public class PlayerController : MonoBehaviour
             hitEffect.Play();
             //TimeController.setTime(0.05f);
             StartCoroutine(TimeController.FreezeTime(0.01f));
-            _invincibility.Restart();
+            _invincibility.Restart(invincibilityMax);
         }
     }
 
