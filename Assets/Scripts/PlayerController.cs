@@ -50,6 +50,7 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D _rb;
     private Timer _wallRunTimer;
     private Timer _cayoteTime;
+    private Timer _attackReloadTimer;
     private bool _onGround;
     private float _wallSide;
     private float _attackCounter;
@@ -61,6 +62,7 @@ public class PlayerController : MonoBehaviour
         inputReader.EnablePlayerActions();
         _rb = gameObject.GetComponent<Rigidbody2D>();
         _cayoteTime = new Timer(cayoteTimeMax);
+        _attackReloadTimer = new Timer(0.2f);
         _wallRunTimer = new Timer(WallRunLingerTime);
         enemiesInRadar = new List<GameObject>();
         _playerState = State.Moving;
@@ -187,13 +189,15 @@ public class PlayerController : MonoBehaviour
     }
 
     private void AttackAction(EmptyEventArgs args){
-        if(_playerState == State.Moving){
+        if(_playerState == State.Moving && !_attackReloadTimer.IsRunning){
             if (TryLocateClosestTarget(out GameObject closestTarget))
             {
                 Vector3 target = closestTarget.transform.position;
 
                 if(Vector3.Distance(transform.position, target) <= attackRange){
                     //start attack
+                    StartCoroutine(invincible(0.02f));
+                    _attackReloadTimer.Restart();
                     sliceEffect.Play();
                     _playerState = State.Attacking;
                     _attackCounter = attackLength;
@@ -241,6 +245,8 @@ public class PlayerController : MonoBehaviour
 
         if(_directionalInput.x != 0)
             _direction = _directionalInput.x;
+
+        _attackReloadTimer.Tick(Time.deltaTime);
     }
 
     private void WallInteraction(){
