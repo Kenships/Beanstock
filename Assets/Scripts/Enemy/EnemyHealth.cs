@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Runtime.CompilerServices;
+using DamageManagement;
 using UnityEngine;
 
-public class EnemyHealth : MonoBehaviour
+public class EnemyHealth : MonoBehaviour, IDamageable
 {
     [SerializeField] private float maxHealth;
     private float _health;
@@ -22,18 +23,18 @@ public class EnemyHealth : MonoBehaviour
     }
 
     private void OnCollisionEnter2D(Collision2D other) {
-        if(other.gameObject.tag == "Player Attack"){
-            _health--;
-            if(_health <= 0){
-                Die();
-            }
-            else{
-                StartCoroutine(getHit());
-            }
-        }
+        // if(other.gameObject.CompareTag("Player Attack")){
+        //     _health--;
+        //     if(_health <= 0){
+        //         Die();
+        //     }
+        //     else{
+        //         StartCoroutine(GetHit());
+        //     }
+        // }
     }
 
-    IEnumerator getHit(){
+    private IEnumerator GetHit(){
         Color originalColor = sprite.color;
         sprite.material = flash;
         sprite.color = Color.white;
@@ -42,9 +43,22 @@ public class EnemyHealth : MonoBehaviour
         sprite.material = normal;
     }
 
-    void Die(){
+    public void Damage(float damage)
+    {
+        _health -= damage;
+        if(_health <= 0){
+            Die();
+        }
+        else{
+            StartCoroutine(GetHit());
+        }
+    }
+
+    public void Die()
+    {
         _health = maxHealth;
         GameObject MyRespawn = Instantiate(respawn, originalPosition, Quaternion.identity);
         MyRespawn.GetComponent<RespawnHolder>().enemy = gameObject;
     }
+    
 }

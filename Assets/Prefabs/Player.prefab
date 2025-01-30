@@ -4901,6 +4901,51 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
+--- !u!1 &1853818992395841132
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 406530137910282067}
+  - component: {fileID: 3459185989504093034}
+  m_Layer: 0
+  m_Name: PlayerHealth
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &406530137910282067
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1853818992395841132}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4727674313312519339}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3459185989504093034
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1853818992395841132}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c5e8b2a58113674e8e522e6e56e65e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  health: 100
 --- !u!1 &1883179440585506027
 GameObject:
   m_ObjectHideFlags: 0
@@ -14826,6 +14871,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3079264748839127797}
   - component: {fileID: 7732590118501276713}
+  - component: {fileID: 6035450804186474003}
   m_Layer: 0
   m_Name: AttackTrigger
   m_TagString: Untagged
@@ -14878,7 +14924,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -14894,6 +14940,21 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1.45}
   m_EdgeRadius: 0
+--- !u!114 &6035450804186474003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3168594554065382900}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa449380cf67a6540aff6365afe9c5cf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onAttackEnable: {fileID: 11400000, guid: ffcb4e1f76b65b94199da4aac23f8a2f, type: 2}
+  onPlayerAttackLanded: {fileID: 11400000, guid: 21d6080cc6171ea468c9cad5abb35a17, type: 2}
+  playerTransform: {fileID: 4727674313312519339}
 --- !u!1 &3715037989865204769
 GameObject:
   m_ObjectHideFlags: 0
@@ -39909,10 +39970,7 @@ GameObject:
   - component: {fileID: 5044121060751550326}
   - component: {fileID: 2332730141399857760}
   - component: {fileID: 2449040770975972606}
-  - component: {fileID: 5525322486961771360}
-  - component: {fileID: 4195870769204071029}
-  - component: {fileID: 1146953185158984659}
-  - component: {fileID: 6845836795343975212}
+  - component: {fileID: 1412064604733299009}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -39945,6 +40003,7 @@ Transform:
   - {fileID: 1042558936800613105}
   - {fileID: 7947266926335890192}
   - {fileID: 3079264748839127797}
+  - {fileID: 406530137910282067}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!50 &5044121060751550326
@@ -39986,7 +40045,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a54001d2deb0fe84e95264242185636f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  onAttackEnable: {fileID: 11400000, guid: ffcb4e1f76b65b94199da4aac23f8a2f, type: 2}
   inputReader: {fileID: 11400000, guid: 96066849e81e6ca40a6947edb52c1f16, type: 2}
+  playerDamage: 1
   moveSpeed: 80
   jumpSpeed: 40
   climbSpeed: 15
@@ -39996,6 +40057,7 @@ MonoBehaviour:
   cayoteTimeMax: 0.17
   attackSpeed: 70
   attackLength: 0.17
+  maxSpinTime: 1
   attackRange: 12
   attack: {fileID: 1883179440585506027}
   hitEffect: {fileID: 491630964808884484}
@@ -40053,9 +40115,9 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.2, y: 1.2}
+  m_Size: {x: 0.75, y: 1.2}
   m_EdgeRadius: 0
---- !u!114 &5525322486961771360
+--- !u!114 &1412064604733299009
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -40064,109 +40126,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 7182020811009081600}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bc650576e677437aafdcec182eda04a5, type: 3}
+  m_Script: {fileID: 11500000, guid: a5a1c926799892b4ea5374661021a946, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  eventChannel: {fileID: 11400000, guid: eb3b8c3bfd86b46beb8ef7b53f8f1cbc, type: 2}
-  response:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2332730141399857760}
-        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
-        m_MethodName: SetOnGround
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!114 &4195870769204071029
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7182020811009081600}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 710ab4a3d4674a43927084a9ab43c93d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  eventChannel: {fileID: 11400000, guid: bd0e1cf19b5d647069951a3650f6d1e7, type: 2}
-  response:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2332730141399857760}
-        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
-        m_MethodName: SetOnWall
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!114 &1146953185158984659
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7182020811009081600}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6d3ad515c3484911ba04013d1f96b24d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  eventChannel: {fileID: 11400000, guid: 52030d6e6ae6e5d4383bc887eb9989dc, type: 2}
-  response:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2332730141399857760}
-        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
-        m_MethodName: ProcessBogie
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!114 &6845836795343975212
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7182020811009081600}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 23b2370ba1dc4f3d8160b1c313d03eb6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  eventChannel: {fileID: 11400000, guid: 3798b35c3c77d44e2a367985bbb79712, type: 2}
-  response:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2332730141399857760}
-        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
-        m_MethodName: EndZipline
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+  playerGroundChannel: {fileID: 11400000, guid: eb3b8c3bfd86b46beb8ef7b53f8f1cbc, type: 2}
+  playerWallChannel: {fileID: 11400000, guid: bd0e1cf19b5d647069951a3650f6d1e7, type: 2}
+  radar: {fileID: 11400000, guid: 52030d6e6ae6e5d4383bc887eb9989dc, type: 2}
+  playerAttackLanded: {fileID: 11400000, guid: 21d6080cc6171ea468c9cad5abb35a17, type: 2}
+  player: {fileID: 2332730141399857760}
 --- !u!1 &7575857169930750292
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,14 +1,17 @@
+using System.Collections;
 using System.Collections.Generic;
+using DamageManagement;
 using Events.Channels;
 using Events.Input;
 using UnityEngine;
-using UnityEngine.Serialization;
+using UnityEngine.InputSystem;
 using Util;
 
 public class PlayerController : MonoBehaviour
 {
-    
+    [SerializeField] private BoolEventChannelSO onAttackEnable;
     [SerializeField] private InputReader inputReader;
+    [SerializeField] private float playerDamage;
     [SerializeField] private float moveSpeed;
     [SerializeField] private float jumpSpeed;
     [SerializeField] private float climbSpeed;
@@ -18,6 +21,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float cayoteTimeMax;
     [SerializeField] private float attackSpeed;
     [SerializeField] private float attackLength;
+    [SerializeField] private float maxSpinTime;
     [SerializeField] private float attackRange;
     [SerializeField] private GameObject attack;
     [SerializeField] private ParticleSystem hitEffect;
@@ -49,9 +53,11 @@ public class PlayerController : MonoBehaviour
     private Timer _wallRunTimer;
     private Timer _cayoteTime;
     private Timer _invincibility;
+    private Timer _attackCounter;
+    private Timer _spinTimer;
     private bool _onGround;
     private float _wallSide;
-    private float _attackCounter;
+    
     private float _direction;
 
     private void Awake()
@@ -63,8 +69,10 @@ public class PlayerController : MonoBehaviour
         _cayoteTime = new Timer(cayoteTimeMax);
         _wallRunTimer = new Timer(WallRunLingerTime);
         _invincibility = new Timer(invincibilityMax);
+        _attackCounter = new Timer(attackLength);
+        _spinTimer = new Timer(maxSpinTime);
         enemiesInRadar = new List<GameObject>();
-        _playerState = State.Moving;
+        SetState(State.Moving);
     }
 
     private void Start(){
@@ -73,6 +81,8 @@ public class PlayerController : MonoBehaviour
         inputReader.Attack.onEventRaised += AttackAction;
         _wallRunTimer.OnTimerStart += StartWallRunningParticles;
         _wallRunTimer.OnTimerEnd += StopWallRunningParticles;
+        _attackCounter.OnTimerEnd += EndDashAttack;
+        _spinTimer.OnTimerEnd += StopSpinning;
     }
 
     private enum State{
@@ -92,7 +102,7 @@ public class PlayerController : MonoBehaviour
                 break;
             case State.Attacking:
                 gameObject.tag = "Player Attack";
-                Attack();
+                DashAttack();
                 break;
             case State.Ziplining:
                 break;
@@ -104,17 +114,14 @@ public class PlayerController : MonoBehaviour
         }
         //jittery camera
         SetGravity();
-
+        _spinTimer.Tick(Time.deltaTime);
         _invincibility.Tick(Time.deltaTime);
         _wallRunTimer.Tick(Time.deltaTime);
+        _attackCounter.Tick(Time.deltaTime);
     }
 
     private void FixedUpdate() {
         SetAxe();
-
-        if(_attackCounter < 0.1f){
-            sliceEffect.SetActive(false);
-        }
     }
 
     private void SetSpinningSpriteRotation()
@@ -177,14 +184,20 @@ public class PlayerController : MonoBehaviour
         return Mathf.Approximately(_directionalInput.x, _wallSide) && Mathf.Approximately(_directionalInput.y, 1);
     }
 
-    private void Attack(){
+    private void DashAttack()
+    {
         _rb.linearVelocity = playerSprite.up * attackSpeed;
-        _attackCounter -= Time.deltaTime;
 
-        if(_attackCounter < 0){
+        if(!_attackCounter.IsRunning){
             _rb.linearVelocity /= AttackSlowDown;
-            _playerState = State.Moving;
+            SetState(State.Moving);
         }
+    }
+
+    private void EndDashAttack()
+    {
+        _rb.linearVelocity /= AttackSlowDown;
+        sliceEffect.SetActive(false);
     }
 
     private void SlerpRotate(Transform setter, float angle, float speed){
@@ -206,16 +219,18 @@ public class PlayerController : MonoBehaviour
     }
 
     private void AttackAction(EmptyEventArgs args){
+        
         if(_playerState == State.Moving){
             if (TryLocateClosestTarget(out GameObject closestTarget))
             {
+                onAttackEnable.RaiseEvent(true);
                 Vector3 target = closestTarget.transform.position;
 
                 if(Vector3.Distance(transform.position, target) <= attackRange){
                     //start attack
                     sliceEffect.SetActive(true);
-                    _playerState = State.Attacking;
-                    _attackCounter = attackLength;
+                    SetState(State.Attacking);
+                    _attackCounter.Restart(attackLength);
                     playerSprite.up = GetAimPosition(transform.position, target);
                 }
             }
@@ -247,7 +262,7 @@ public class PlayerController : MonoBehaviour
 
     private void WallInteraction(){
         //if the players touching a wall
-        if(_wallSide != 0 && _onGround == false){
+        if(_wallSide != 0 && !_onGround){
             if(WallRunInput()){
                 //wall running
                 _rb.linearVelocity = new Vector2(_rb.linearVelocityX, climbSpeed);
@@ -299,45 +314,34 @@ public class PlayerController : MonoBehaviour
         _onGround = set;
         if (_onGround)
         {
-            _cayoteTime.Restart(cayoteTimeMax); 
-            if(_playerState == State.Spinning)
-                _playerState = State.Moving;
+            _cayoteTime.Restart(cayoteTimeMax);
+            if (_playerState == State.Spinning)
+            {
+                _attackCounter.ForceEnd();
+                SetState(State.Moving);
+                
+            }
+                
         }
     }
 
     public void SetOnWall(int set){
         _wallSide = set;
 
-        if(_playerState == State.Spinning && set != 0)
-            _playerState = State.Moving;
-    }
-
-    private void OnCollisionEnter2D(Collision2D other) {
-        if(other.gameObject.CompareTag("Enemy") && gameObject.CompareTag("Player Attack")){
-            //hit enemy
-
-            _rb.linearVelocity = new Vector3(spinHitVelocity.x * _directionalInput.x, spinHitVelocity.y);
-            _attackEffect.Play();
-
-            StartCoroutine(TimeController.FreezeTime(0.006f));
-
-            if(_playerState == State.Spinning){
-                if(_directionalInput.x == 0){
-                    attack.transform.up = Vector3.down;
-                }
-                else{
-                    attack.transform.eulerAngles = new Vector3(0, 0, _directionalInput.x * -210);
-                }
-            }
-            else{
-                attack.transform.up = playerSprite.up;
-                _playerState = State.Spinning;
-            }
-
-            _attackCounter = 0;
+        if (_playerState == State.Spinning && set != 0)
+        {
+            _attackCounter.ForceEnd();
+            SetState(State.Moving);
         }
+            
     }
-    
+
+    private void StopSpinning()
+    {
+        //don't use set state to avoid double invokation
+        _playerState = State.Moving;
+        onAttackEnable.RaiseEvent(false);
+    }
     private void OnTriggerEnter2D(Collider2D other) {
         GetHit(other.tag);
 
@@ -360,6 +364,32 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public void CompleteAttack(IDamageable damageable)
+    {
+        damageable.Damage(playerDamage);
+        
+        _rb.linearVelocity = new Vector3(spinHitVelocity.x * _directionalInput.x, spinHitVelocity.y);
+        _attackEffect.Play();
+
+        StartCoroutine(TimeController.FreezeTime(0.006f));
+        _spinTimer.Restart(maxSpinTime);
+        if(_playerState == State.Spinning){
+            
+            if(_directionalInput.x == 0){
+                attack.transform.up = Vector3.down;
+            }
+            else{
+                attack.transform.eulerAngles = new Vector3(0, 0, _directionalInput.x * -210);
+            }
+        }
+        else{
+            attack.transform.up = playerSprite.up;
+            _playerState = State.Spinning;
+        }
+        
+        
+    }
+    
     public void ProcessBogie(RadarInfo radarInfo)
     {
         GameObject potentialEnemy = radarInfo.Bogie;
@@ -410,5 +440,15 @@ public class PlayerController : MonoBehaviour
         _rb.linearVelocity = new Vector2(inputVelocity.x, 10);
         //_rb.linearVelocity = inputVelocity * ziplineLaunchSpeed;
         _playerState = State.Moving;
+    }
+
+    private void SetState(State newState)
+    {
+        //stop spinning on transition out from spinning state
+        if (_playerState == State.Spinning && _playerState != newState)
+        {
+            _spinTimer.ForceEnd();
+        }
+        _playerState = newState;
     }
 }
