@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using Events.Channels;
 using Events.Input;
@@ -22,7 +23,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private GameObject attack;
     [SerializeField] private ParticleSystem hitEffect;
     [SerializeField] private ParticleSystem wallJumpEffect;
-    [SerializeField] private GameObject sliceEffect;
+    [SerializeField] private ParticleSystem sliceEffect;
     [SerializeField] private ParticleSystem wallRunEffect;
     [SerializeField] List<GameObject> enemiesInRadar;
     [SerializeField] private float invincibilityMax;
@@ -31,6 +32,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float axeSpinningSpeed;
     [SerializeField] private Vector2 spinHitVelocity;
     [SerializeField] private float spinSpeed;
+    [SerializeField] private float shotSpeed;
+    [SerializeField] private ParticleSystem shootEffect;
+    [SerializeField] private Transform shotTransform;
+    [SerializeField] private LayerMask groundLayer;
 
     private const float AxeFollowSpeed = 50;
     private const float AxeRotationSpeed = 300;
@@ -47,7 +52,6 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D _rb;
     private Timer _wallRunTimer;
     private Timer _cayoteTime;
-    private Timer _invincibility;
     private bool _onGround;
     private float _wallSide;
     private float _attackCounter;
@@ -55,13 +59,11 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
-        sliceEffect.SetActive(false);
         _attackEffect = attack.GetComponent<ParticleSystem>();
         inputReader.EnablePlayerActions();
         _rb = gameObject.GetComponent<Rigidbody2D>();
         _cayoteTime = new Timer(cayoteTimeMax);
         _wallRunTimer = new Timer(WallRunLingerTime);
-        _invincibility = new Timer(invincibilityMax);
         enemiesInRadar = new List<GameObject>();
         _playerState = State.Moving;
     }
@@ -70,6 +72,7 @@ public class PlayerController : MonoBehaviour
         inputReader.Jump.onEventRaised += Jump;
         inputReader.Move.onEventRaised += SetDirection;
         inputReader.Attack.onEventRaised += AttackAction;
+        inputReader.Shoot.onEventRaised += Shoot;
         _wallRunTimer.OnTimerStart += StartWallRunningParticles;
         _wallRunTimer.OnTimerEnd += StopWallRunningParticles;
     }
@@ -104,16 +107,11 @@ public class PlayerController : MonoBehaviour
         //jittery camera
         SetGravity();
 
-        _invincibility.Tick(Time.deltaTime);
         _wallRunTimer.Tick(Time.deltaTime);
     }
 
     private void FixedUpdate() {
         SetAxe();
-
-        if(_attackCounter < 0.1f){
-            sliceEffect.SetActive(false);
-        }
     }
 
     private void SetSpinningSpriteRotation()
@@ -212,13 +210,30 @@ public class PlayerController : MonoBehaviour
 
                 if(Vector3.Distance(transform.position, target) <= attackRange){
                     //start attack
-                    sliceEffect.SetActive(true);
+                    sliceEffect.Play();
                     _playerState = State.Attacking;
                     _attackCounter = attackLength;
                     playerSprite.up = GetAimPosition(transform.position, target);
                 }
             }
-            
+        }
+    }
+
+    private void Shoot(EmptyEventArgs args){
+        Debug.Log("Shoot!");
+        if(_playerState == State.Moving){
+            if (TryLocateClosestTarget(out GameObject closestTarget))
+            {
+                Vector3 target = closestTarget.transform.position;
+
+                if(Vector3.Distance(transform.position, target) <= attackRange){
+                    //start attack
+                    playerSprite.up = GetAimPosition(transform.position, target);
+                    _rb.linearVelocity = playerSprite.up * shotSpeed;
+                    shootEffect.Play();
+                    shotTransform.up = playerSprite.up;
+                }
+            }
         }
     }
 
@@ -315,26 +330,33 @@ public class PlayerController : MonoBehaviour
         if(other.gameObject.CompareTag("Enemy") && gameObject.CompareTag("Player Attack")){
             //hit enemy
 
-            _rb.linearVelocity = new Vector3(spinHitVelocity.x * _directionalInput.x, spinHitVelocity.y);
             _attackEffect.Play();
+
 
             StartCoroutine(TimeController.FreezeTime(0.006f));
 
-            if(_playerState == State.Spinning){
-                if(_directionalInput.x == 0){
-                    attack.transform.up = Vector3.down;
-                }
-                else{
-                    attack.transform.eulerAngles = new Vector3(0, 0, _directionalInput.x * -210);
-                }
+            attack.transform.up = playerSprite.up;
+
+            //check if enemy is grounded
+            if(checkIsGrounded(other.transform.position)){
+                _rb.linearVelocity = new Vector3(_direction * 35, 40);
+                _playerState = State.Moving;
             }
             else{
-                attack.transform.up = playerSprite.up;
-                _playerState = State.Spinning;
+                _attackCounter = 0.05f;
+                StartCoroutine(invincible(0.3f));
             }
-
-            _attackCounter = 0;
         }
+    }
+
+    private IEnumerator invincible(float time){
+        gameObject.layer = LayerMask.NameToLayer("Invincible");
+        yield return new WaitForSeconds(time);
+        gameObject.layer = LayerMask.NameToLayer("Default");
+    }
+
+    bool checkIsGrounded(Vector3 checkPosition){
+        return Physics2D.BoxCast(new Vector2(checkPosition.x, checkPosition.y - 1), new Vector2(0.8f, 1), 0, Vector2.zero, 0, groundLayer);
     }
 
     private void OnTriggerEnter2D(Collider2D other) {
@@ -351,11 +373,10 @@ public class PlayerController : MonoBehaviour
     }
 
     private void GetHit(string otherTag){
-        if(!_invincibility.IsRunning && otherTag == "Enemy Attack"){
+        if(otherTag == "Enemy Attack"){
             hitEffect.Play();
-            //TimeController.setTime(0.05f);
             StartCoroutine(TimeController.FreezeTime(0.01f));
-            _invincibility.Restart();
+            StartCoroutine(invincible(1.5f));
         }
     }
 
