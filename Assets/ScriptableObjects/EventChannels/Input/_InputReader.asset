@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a39c0dbb4f0f89488af9b3395534e27, type: 3}
+  m_Name: _InputReader
+  m_EditorClassIdentifier: 
+  Move: {fileID: 11400000, guid: 8c393c6b5d976434498c679587749ad4, type: 2}
+  Jump: {fileID: 11400000, guid: 92167bdc4ddc4c3449a096574b85596c, type: 2}
+  Attack: {fileID: 11400000, guid: 26d9964a7c97f4470a8ecb190056fd5d, type: 2}
+  Shoot: {fileID: 11400000, guid: 0707c4328829d4f2f8abc1331785d84b, type: 2}
