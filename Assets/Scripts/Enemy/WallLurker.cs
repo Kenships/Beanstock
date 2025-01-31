@@ -8,7 +8,6 @@ namespace Enemy
         [SerializeField] private float emergeSpeed = 10.0f; // Speed at which the enemy emerges from the wall
         [SerializeField] private float retreatSpeed = 1.0f; // Speed at which the enemy retreats into the wall
         [SerializeField] private float retreatDelay = 2.0f; // Delay before retreating after emerging
-        [SerializeField] private ParticleSystem leaves;
 
         private Collider2D _ec;
         private bool _isPlayerInRange = false;
@@ -30,11 +29,6 @@ namespace Enemy
 
         void Update()
         {
-            if (_isPlayerInRange && !leaves.isPlaying)
-            {
-                leaves.Play();
-            }
-
             switch (_currentState)
             {
                 case EnemyState.Hidden:
