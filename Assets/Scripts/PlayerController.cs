@@ -62,7 +62,7 @@ public class PlayerController : MonoBehaviour
         inputReader.EnablePlayerActions();
         _rb = gameObject.GetComponent<Rigidbody2D>();
         _cayoteTime = new Timer(cayoteTimeMax);
-        _attackReloadTimer = new Timer(0.2f);
+        _attackReloadTimer = new Timer(0.15f);
         _wallRunTimer = new Timer(WallRunLingerTime);
         enemiesInRadar = new List<GameObject>();
         _playerState = State.Moving;
@@ -121,7 +121,7 @@ public class PlayerController : MonoBehaviour
         }
         else if(WallRunInput()){
             //wallrunning
-            SlerpRotate(playerSprite, _wallSide * 90, 15);
+            SlerpRotate(playerSprite, _wallSide * 75, 15);
             _wallRunTimer.Restart();
         }
         else{
@@ -348,6 +348,7 @@ public class PlayerController : MonoBehaviour
 
         if(other.CompareTag("Zipline")){
             _playerState = State.Ziplining;
+            gameObject.layer = LayerMask.NameToLayer("Invincible");
             other.GetComponent<Zipline>().StartZip();
         }
     }
@@ -413,6 +414,6 @@ public class PlayerController : MonoBehaviour
     public void EndZipline(Vector3 inputVelocity){
         _rb.linearVelocity = new Vector2(inputVelocity.x, 30);
         _playerState = State.Moving;
-        invincible(0.1f);
+        invincible(0.3f);
     }
 }

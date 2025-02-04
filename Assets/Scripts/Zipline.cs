@@ -47,13 +47,13 @@ public class Zipline : MonoBehaviour
             case State.Idle:
                 //got to closest position to player on line
                 closestPoint.position = FindClosestPoint(point1.position, GetLineDirection());
-                rb.linearVelocity *= 0;
+                //rb.linearVelocity *= 0;
                 break;
             case State.Ziplining:
                 //move towards end point
                 rb.linearVelocity += (Vector2)closestPoint.up * (speed * Time.deltaTime);
                 playerTransform.position = closestPoint.position;
-                break;
+                break; 
         }
 
         //aim at end point
@@ -90,7 +90,7 @@ public class Zipline : MonoBehaviour
         lineDir = Vector3.Normalize(lineDir);
         var v = playerTransform.position - linePnt;
         var d = Vector3.Dot(v, lineDir);
-
+        
 
         return linePnt + lineDir * d;
     }
