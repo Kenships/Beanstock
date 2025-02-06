@@ -18,6 +18,7 @@ public class EnemyHealth : MonoBehaviour
     [SerializeField] private float hitSpeed;
     [SerializeField] private float hitDrag;
     private Color originalColor;
+    private float _invinvible;
 
     private void Awake() {
         originalColor = sprite.color;
@@ -31,13 +32,18 @@ public class EnemyHealth : MonoBehaviour
         _rb = gameObject.GetComponent<Rigidbody2D>();
     }
 
+    void Update(){
+        _invinvible -= Time.deltaTime;
+    }
+
     private void OnEnable() {
         sprite.color = originalColor;
         sprite.material = normal;
     }
 
     private void OnCollisionEnter2D(Collision2D other) {
-        if(other.gameObject.tag == "Player Attack"){
+        if(other.gameObject.tag == "Player Attack" && _invinvible < 0){
+            _invinvible = 0.03f;
             _health--;
             if(_health <= 0){
                 Die();
