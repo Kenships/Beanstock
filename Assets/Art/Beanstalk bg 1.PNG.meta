@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Beanstalk bg 1_0: 4866054626569160805
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
