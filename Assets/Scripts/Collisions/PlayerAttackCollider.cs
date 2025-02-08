@@ -17,7 +17,6 @@ public class PlayerAttackCollider : MonoBehaviour
 
     private void SetTrigger(bool value)
     {
-        Debug.Log(value);
         gameObject.SetActive(value);
     }
 
