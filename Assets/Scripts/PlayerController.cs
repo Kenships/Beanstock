@@ -38,6 +38,7 @@ public class PlayerController : MonoBehaviour
     [Header("___TIMER CONFIG___")]
     [SerializeField] private float invincibilityMax;
     [SerializeField] private float cayoteTimeMax;
+    [SerializeField] private float wallCayoteTimeMax;
     [SerializeField] private float DashAttackCooldown;
     [SerializeField] private float DashBufferMax;
     
@@ -57,7 +58,7 @@ public class PlayerController : MonoBehaviour
     private const float RunningSpeed = 1f;
     private const float FallGravity = 14f;
     private const float RiseGravity = 3f;
-    private const float WallRunLingerTime = 0.03f;
+    private const float WallRunLingerTime = 0.01f;
     
     private State _playerState;
     private ParticleSystem _attackEffect;
@@ -65,7 +66,8 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D _rb;
     private List<Timer> _timers;
     private Timer _wallRunTimer;
-    private Timer _cayoteTime;
+    private Timer _groundCayoteTime;
+    private Timer _wallCayoteTime;
     private Timer _invincibility;
     private Timer _attackTimer;
     private Timer _dashAttackCooldown;
@@ -84,15 +86,18 @@ public class PlayerController : MonoBehaviour
         _rb = gameObject.GetComponent<Rigidbody2D>();
         
         /*___TIMER INITIALIZATION___*/
+        //ticks separately
+        _groundCayoteTime = new Timer(cayoteTimeMax);
+        
         
         _timers = new List<Timer>();
         //Initialize timers and add them to the list --> UpdateTimers() will update all timers in the list
-        _cayoteTime = new Timer(cayoteTimeMax);
-        _timers.Add(_cayoteTime);
         _wallRunTimer = new Timer(WallRunLingerTime);
         _timers.Add(_wallRunTimer);
+        _wallCayoteTime = new Timer(wallCayoteTimeMax);
+        _timers.Add(_wallCayoteTime);
         _invincibility = new Timer(invincibilityMax);
-        _timers.Add(_wallRunTimer);
+        _timers.Add(_invincibility);
         _attackTimer = new Timer(attackLength);
         _timers.Add(_attackTimer);
         _dashAttackCooldown = new Timer(DashAttackCooldown);
@@ -110,6 +115,7 @@ public class PlayerController : MonoBehaviour
         inputReader.Attack.onEventRaised += AttackStart;
         _wallRunTimer.OnTimerStart += StartWallRunningParticles;
         _wallRunTimer.OnTimerEnd += StopWallRunningParticles;
+        _wallCayoteTime.OnTimerEnd += DetachFromWall;
         _attackTimer.OnTimerEnd += EndDashAttack;
         _dashAttackCooldown.OnTimerStart += () => _canAttack = false;
         _dashAttackCooldown.OnTimerEnd += () => _canAttack = true;
@@ -195,7 +201,6 @@ public class PlayerController : MonoBehaviour
     private void StartWallRunningParticles()
     {
         if(wallRunEffect.isPlaying) return;
-        
         wallRunEffect.Play();
     }
 
@@ -222,9 +227,11 @@ public class PlayerController : MonoBehaviour
     }
     
     private void Jump(EmptyEventArgs args){
-        if(_cayoteTime.IsRunning){
+        
+        if(_groundCayoteTime.IsRunning){
+            Debug.Log("Jump");
             _rb.linearVelocity = new Vector2(_rb.linearVelocityX, jumpSpeed);
-            _cayoteTime.ForceEnd();
+            _groundCayoteTime.ForceEnd();
         }
     }
 
@@ -246,26 +253,36 @@ public class PlayerController : MonoBehaviour
 
         WallInteraction();
         if(!_onGround)
-            _cayoteTime.Tick(Time.deltaTime);
+            _groundCayoteTime.Tick(Time.deltaTime);
     }
 
     private void WallInteraction(){
         //if the players touching a wall
-        if(_wallSide != 0 && !_onGround){
+        
+        
+            
+        
+
+        if (_wallSide != 0)
+        {
             if(WallRunInput()){
                 //wall running
                 _rb.linearVelocity = new Vector2(_rb.linearVelocityX, climbSpeed);
+                _wallRunTimer.Restart(WallRunLingerTime);
             }
             else if(Mathf.Approximately(_directionalInput.x, -_wallSide) && Mathf.Approximately(_directionalInput.y, 1)){
                 //wall jump
                 wallJumpEffect.Play();
+                _wallCayoteTime.ForceEnd();
                 _rb.linearVelocity = new Vector2(_directionalInput.x * wallJumpSpeed.x, wallJumpSpeed.y);
             }
-            else if(Mathf.Approximately(_directionalInput.x, _wallSide) && _rb.linearVelocityY < 0){
+            else if (Mathf.Approximately(_directionalInput.x, _wallSide) && _rb.linearVelocityY < 0)
+            {
                 //sliding down wall
                 _rb.linearVelocity *= new Vector2(1, 1 - Time.deltaTime * wallSlideDrag);
             }
         }
+            
     }
 
     private void SetGravity()
@@ -297,17 +314,28 @@ public class PlayerController : MonoBehaviour
     }
 
     public void SetOnGround(bool set){
+        Debug.Log("OnGround = " + set);
         _onGround = set;
         if (_onGround)
         {
-            _cayoteTime.Restart(cayoteTimeMax);
+            _groundCayoteTime.Restart(cayoteTimeMax);
         }
     }
 
     public void SetOnWall(int set){
+        if (set == 0)
+        {
+            _wallCayoteTime.Restart(wallCayoteTimeMax);
+            return;
+        }
+        _wallCayoteTime.Cancel();
         _wallSide = set;
     }
 
+    public void DetachFromWall()
+    {
+        _wallSide = 0;
+    }
     
     private void OnTriggerEnter2D(Collider2D other) {
         GetHit(other.tag);
@@ -371,7 +399,6 @@ public class PlayerController : MonoBehaviour
         
         _attackEffect.Play();
         
-        onAttackEnable.RaiseEvent(false);
         //ends dash
         _attackTimer.ForceEnd();
         
@@ -383,6 +410,7 @@ public class PlayerController : MonoBehaviour
          SetState(State.Moving);
          sliceEffect.SetActive(false);
          _dashAttackCooldown.Restart(DashAttackCooldown);
+         onAttackEnable.RaiseEvent(false);
     }
     
     IEnumerator DashFollowThrough(float time)

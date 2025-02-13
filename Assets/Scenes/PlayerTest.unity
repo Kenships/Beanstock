@@ -2592,11 +2592,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 695450062730954310, guid: 6c6e01367789f449a812f78d1861ca7d, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.49235
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 695450062730954310, guid: 6c6e01367789f449a812f78d1861ca7d, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.7367
+      value: 0.6
       objectReference: {fileID: 0}
     - target: {fileID: 695450062730954310, guid: 6c6e01367789f449a812f78d1861ca7d, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2656,7 +2656,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2332730141399857760, guid: 6c6e01367789f449a812f78d1861ca7d, type: 3}
       propertyPath: dashCompleteSpeed
-      value: 15
+      value: 70
       objectReference: {fileID: 0}
     - target: {fileID: 2332730141399857760, guid: 6c6e01367789f449a812f78d1861ca7d, type: 3}
       propertyPath: spinHitVelocity.x
@@ -2667,12 +2667,20 @@ PrefabInstance:
       value: 75
       objectReference: {fileID: 0}
     - target: {fileID: 2332730141399857760, guid: 6c6e01367789f449a812f78d1861ca7d, type: 3}
+      propertyPath: wallCayoteTimeMax
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 2332730141399857760, guid: 6c6e01367789f449a812f78d1861ca7d, type: 3}
       propertyPath: DashAttackCooldown
       value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 2332730141399857760, guid: 6c6e01367789f449a812f78d1861ca7d, type: 3}
       propertyPath: ziplineLaunchSpeed
       value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2332730141399857760, guid: 6c6e01367789f449a812f78d1861ca7d, type: 3}
+      propertyPath: enemiesInRadar.Array.size
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2449040770975972606, guid: 6c6e01367789f449a812f78d1861ca7d, type: 3}
       propertyPath: m_Size.x
