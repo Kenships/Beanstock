@@ -14,6 +14,6 @@ public class PlayerEventListener : MonoBehaviour
         playerGroundChannel.onEventRaised += player.SetOnGround;
         playerWallChannel.onEventRaised += player.SetOnWall;
         radar.onEventRaised += player.ProcessBogie;
-        playerAttackLanded.onEventRaised += player.CompleteAttack;
+        playerAttackLanded.onEventRaised += player.OnAttackLanded;
     }
 }

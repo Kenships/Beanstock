@@ -13,6 +13,7 @@ namespace Events.Input
         public Vector2EventChannelSO Move;
         public VoidEventChannelSO Jump;
         public VoidEventChannelSO Attack;
+        public VoidEventChannelSO Shoot;
         
         private PlayerInputActions _playerActions;
         
@@ -48,6 +49,12 @@ namespace Events.Input
         public void OnLook(InputAction.CallbackContext context)
         {
             
+        }
+
+        public void OnShoot(InputAction.CallbackContext context){
+            if(context.performed){
+                Shoot.RaiseEvent(new EmptyEventArgs());
+            }
         }
     
         public void OnAttack(InputAction.CallbackContext context)

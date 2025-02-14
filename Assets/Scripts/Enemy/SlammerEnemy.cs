@@ -8,7 +8,7 @@ public class SlammerEnemy : MonoBehaviour
     private Timer _fallTimer;
     
     private Vector3 originalPosition;
-    private const float jumpHeight = 5;
+    private const float jumpHeight = 8;
     [SerializeField] private float riseSpeed;
     [SerializeField] private float fallSpeed;
     [SerializeField] private float topWaitTime;
