@@ -5,6 +5,7 @@ using Events.Channels;
 using Events.Input;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 using Util;
 
 public class PlayerController : MonoBehaviour
@@ -31,7 +32,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float attackRange;
     
     [Header("___PARTICLES___")]
-    [SerializeField] private GameObject sliceEffect;
     [SerializeField] private ParticleSystem hitEffect;
     [SerializeField] private ParticleSystem wallJumpEffect;
     [SerializeField] private ParticleSystem sliceEffect;
@@ -41,15 +41,17 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float invincibilityMax;
     [SerializeField] private float cayoteTimeMax;
     [SerializeField] private float wallCayoteTimeMax;
-    [SerializeField] private float DashAttackCooldown;
-    [SerializeField] private float DashBufferMax;
+    [SerializeField] private float dashAttackCooldown; 
+    [SerializeField] private float dashBufferMax;
     
     [Header("___AXE CONFIG___")]
     [SerializeField] private Transform axe;
     [SerializeField] private SpriteRenderer axeSprite;
     [SerializeField] private float axeSpinningSpeed;
+    
     [Header("___SHOTGUN CONFIG___")]
     [SerializeField] private float shotSpeed;
+    [SerializeField] private float reloadTime;
     [SerializeField] private ParticleSystem shootEffect;
     [SerializeField] private Transform shotTransform;
     [SerializeField] private LayerMask groundLayer;
@@ -79,6 +81,7 @@ public class PlayerController : MonoBehaviour
     private Timer _attackTimer;
     private Timer _dashAttackCooldown;
     private Timer _dashAttackBuffer;
+    private Timer _attackReloadTimer;
     private bool _onGround;
     private bool _canAttack;
     private float _wallSide;
@@ -93,7 +96,6 @@ public class PlayerController : MonoBehaviour
             healthManager.OnDamage.onEventRaised += OnDamaged;
             healthManager.OnHeal.onEventRaised += OnHeal;
         }
-        sliceEffect.SetActive(false);
         _attackEffect = attack.GetComponent<ParticleSystem>();
         inputReader.EnablePlayerActions();
         _rb = gameObject.GetComponent<Rigidbody2D>();
@@ -113,10 +115,11 @@ public class PlayerController : MonoBehaviour
         _timers.Add(_invincibility);
         _attackTimer = new Timer(attackLength);
         _timers.Add(_attackTimer);
-        _dashAttackCooldown = new Timer(DashAttackCooldown);
+        _dashAttackCooldown = new Timer(dashAttackCooldown);
         _timers.Add(_dashAttackCooldown);
         _dashAttackBuffer = new Timer(0);
         _timers.Add(_dashAttackBuffer);
+        _attackReloadTimer = new Timer(reloadTime);
         
         enemiesInRadar = new List<GameObject>();
         
@@ -284,9 +287,9 @@ public class PlayerController : MonoBehaviour
 
         WallInteraction();
         if(!_onGround)
+            _groundCayoteTime.Tick(Time.deltaTime);
         if(_directionalInput.x != 0)
             _direction = _directionalInput.x;
-        _attackReloadTimer.Tick(Time.deltaTime);
     }
 
     private void WallInteraction(){
@@ -398,7 +401,6 @@ public class PlayerController : MonoBehaviour
     
                 if(Vector3.Distance(transform.position, target) <= attackRange){
                     //start attack
-                    StartCoroutine(invincible(0.02f));
                     sliceEffect.Play();
                     SetState(State.Attacking);
                     _attackTimer.Restart(attackLength);
@@ -406,7 +408,7 @@ public class PlayerController : MonoBehaviour
                 }
             }
         }
-        else if (!_canAttack && !_dashAttackBuffer.IsRunning && _dashAttackCooldown.RemainingSeconds < DashBufferMax)
+        else if (!_canAttack && !_dashAttackBuffer.IsRunning && _dashAttackCooldown.RemainingSeconds < dashBufferMax)
         {
             _dashAttackBuffer.Restart(_dashAttackCooldown.RemainingSeconds);
         }
@@ -428,15 +430,14 @@ public class PlayerController : MonoBehaviour
         _attackTimer.ForceEnd();
         
         StartCoroutine(DashFollowThrough(0.006f));
-        StartCoroutine(Invincible(0.5f));
         
     }
     private void EndDashAttack()
     {
         _rb.linearVelocity /= AttackSlowDown;
         SetState(State.Moving);
-        sliceEffect.SetActive(false);
-        _dashAttackCooldown.Restart(DashAttackCooldown);
+        sliceEffect.Stop();
+        _dashAttackCooldown.Restart(dashAttackCooldown);
         onAttackEnable.RaiseEvent(false);
     }
     
@@ -504,7 +505,6 @@ public class PlayerController : MonoBehaviour
     public void EndZipline(Vector3 inputVelocity){
         _rb.linearVelocity = new Vector2(inputVelocity.x, 30);
         _playerState = State.Moving;
-        invincible(0.3f);
     }
    
 }

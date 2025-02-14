@@ -54,8 +54,9 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         // }
     }
 
-    IEnumerator getHit(){
-        Vector3 playerPosition
+    IEnumerator GetHit()
+    {
+        Vector3 playerPosition;
         //knock back
         //transform.up = GetAimPosition(transform.position, playerPosition) * -1;
         //_rb.linearVelocity = transform.up * hitSpeed;
@@ -90,7 +91,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         return new Vector3(a.x - b.x, a.y - b.y) * -1;
     }
 
-    void Die(){
+    public void Die(){
         _health = maxHealth;
         GameObject MyRespawn = Instantiate(respawn, originalPosition, Quaternion.identity);
         MyRespawn.GetComponent<RespawnHolder>().enemy = gameObject;
