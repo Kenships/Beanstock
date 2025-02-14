@@ -12,7 +12,8 @@ public class PlayerController : MonoBehaviour
     [Header("___EVENTS___")]
     [SerializeField] private BoolEventChannelSO onAttackEnable;
     [SerializeField] private InputReader inputReader;
-    
+    [Header("___HEALTH___")]
+    [SerializeField] private HealthManager healthManager;
     [Header("___MOVEMENT___")]
     [SerializeField] private Vector2 wallJumpSpeed;
     [SerializeField] private GameObject attack;
@@ -80,6 +81,12 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
+        if(healthManager == null) Debug.LogWarning("HealthManager is not assigned to " + gameObject.name);
+        else
+        {
+            healthManager.OnDamage.onEventRaised += OnDamaged;
+            healthManager.OnHeal.onEventRaised += OnHeal;
+        }
         sliceEffect.SetActive(false);
         _attackEffect = attack.GetComponent<ParticleSystem>();
         inputReader.EnablePlayerActions();
@@ -258,11 +265,6 @@ public class PlayerController : MonoBehaviour
 
     private void WallInteraction(){
         //if the players touching a wall
-        
-        
-            
-        
-
         if (_wallSide != 0)
         {
             if(WallRunInput()){
@@ -299,6 +301,10 @@ public class PlayerController : MonoBehaviour
                 break;
         }
     }
+    private void SetState(State newState)
+    {
+        _playerState = newState;
+    }
 
     private void MoveHorizontal(float speedFactor){
         _rb.linearVelocity += new Vector2(_directionalInput.x * moveSpeed, 0) * (speedFactor * Time.deltaTime);
@@ -331,46 +337,39 @@ public class PlayerController : MonoBehaviour
         _wallCayoteTime.Cancel();
         _wallSide = set;
     }
-
+    
+    
     public void DetachFromWall()
     {
         _wallSide = 0;
     }
-    
-    private void OnTriggerEnter2D(Collider2D other) {
-        GetHit(other.tag);
-
-        if(other.CompareTag("Zipline")){
-            _playerState = State.Ziplining;
-            other.GetComponent<Zipline>().StartZip();
-        }
+    private void OnHeal(float healthRemaining){
+        //can put some particle effects here or something
+        Debug.Log("Healed to " + healthRemaining);
     }
-
-    private void OnParticleCollision(GameObject other) {
-        GetHit(other.tag);
+    private void OnDamaged(float damage){
+        
+        hitEffect.Play();
+        StartCoroutine(TimeController.FreezeTime(0.01f));
+        _invincibility.Restart(invincibilityMax);
+        
     }
-
-    private void GetHit(string otherTag){
-        if(!_invincibility.IsRunning && otherTag == "Enemy Attack"){
-            hitEffect.Play();
-            //TimeController.setTime(0.05f);
-            StartCoroutine(TimeController.FreezeTime(0.01f));
-            _invincibility.Restart(invincibilityMax);
-        }
-    }
+    /*-------------------------------*/
+    /*__________DASH ATTACK__________*/
+    /*-------------------------------*/
     private void ForceStartDashAttack(){
         //insures that the player can attack after the buffer ends
         _dashAttackCooldown.ForceEnd();
         AttackStart(new EmptyEventArgs());
     }
     private void AttackStart(EmptyEventArgs args){
-        
+            
         if(_playerState == State.Moving && _canAttack){
             if (TryLocateClosestTarget(out GameObject closestTarget))
             {
                 onAttackEnable.RaiseEvent(true);
                 Vector3 target = closestTarget.transform.position;
-
+    
                 if(Vector3.Distance(transform.position, target) <= attackRange){
                     //start attack
                     sliceEffect.SetActive(true);
@@ -389,7 +388,6 @@ public class PlayerController : MonoBehaviour
     {
         _rb.linearVelocity = playerSprite.up * attackSpeed;
     }
-
     
     public void OnAttackLanded(IDamageable damageable)
     {
@@ -406,11 +404,11 @@ public class PlayerController : MonoBehaviour
     }
     private void EndDashAttack()
     {
-         _rb.linearVelocity /= AttackSlowDown;
-         SetState(State.Moving);
-         sliceEffect.SetActive(false);
-         _dashAttackCooldown.Restart(DashAttackCooldown);
-         onAttackEnable.RaiseEvent(false);
+        _rb.linearVelocity /= AttackSlowDown;
+        SetState(State.Moving);
+        sliceEffect.SetActive(false);
+        _dashAttackCooldown.Restart(DashAttackCooldown);
+        onAttackEnable.RaiseEvent(false);
     }
     
     IEnumerator DashFollowThrough(float time)
@@ -418,6 +416,10 @@ public class PlayerController : MonoBehaviour
         yield return TimeController.FreezeTime(time);;
         _rb.linearVelocity = playerSprite.up * dashCompleteSpeed;
     }
+    
+    /*-------------------------------*/
+    /*__________RADAR SYSTEM__________*/
+    /*-------------------------------*/
     
     public void ProcessBogie(RadarInfo radarInfo)
     {
@@ -443,7 +445,8 @@ public class PlayerController : MonoBehaviour
     {
         enemiesInRadar.Remove(enemy);
     }
-
+    
+    
     private bool TryLocateClosestTarget(out GameObject closestTarget)
     {
         closestTarget = null;
@@ -464,15 +467,15 @@ public class PlayerController : MonoBehaviour
         
         return true;
     }
-
+    
+    /*-------------------------------*/
+    /*__________ZIPLINE SYSTEM__________*/
+    /*-------------------------------*/
+    //Remove me Later, Player is only responsible for knowing that it is on a zipline
     public void EndZipline(Vector3 inputVelocity){
         _rb.linearVelocity = new Vector2(inputVelocity.x, 10);
         //_rb.linearVelocity = inputVelocity * ziplineLaunchSpeed;
         _playerState = State.Moving;
     }
-
-    private void SetState(State newState)
-    {
-        _playerState = newState;
-    }
+   
 }

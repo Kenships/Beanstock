@@ -17,6 +17,7 @@ namespace Util
         private bool _isStarted;
         private bool _invokeStartOnZero;
         private bool _invokeEndOnZero;
+        private bool _isLooping;
 
         public Timer(float duration, bool invokeStartOnZero = false, bool invokeEndOnZero = false)
         {
@@ -88,6 +89,10 @@ namespace Util
             RemainingSeconds = 0;
             IsRunning = false;
             OnTimerEnd?.Invoke();
+            if (IsLooping())
+            {
+                Restart();
+            }
         }
         
         public void AddTime(float time)
@@ -103,6 +108,18 @@ namespace Util
         public void SetInvokeEndOnZero(bool value)
         {
             _invokeEndOnZero = value;
+        }
+        public void Loop()
+        {
+            _isLooping = true;
+        }
+        public bool IsLooping()
+        {
+            return _isLooping;
+        }
+        public void StopLooping()
+        {
+            _isLooping = false;
         }
         
     }

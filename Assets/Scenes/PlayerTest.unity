@@ -2618,6 +2618,14 @@ PrefabInstance:
       propertyPath: InitialModule.startSpeed.scalar
       value: 110
       objectReference: {fileID: 0}
+    - target: {fileID: 1841297654960631983, guid: 6c6e01367789f449a812f78d1861ca7d, type: 3}
+      propertyPath: parentTransform
+      value: 
+      objectReference: {fileID: 1877762549}
+    - target: {fileID: 1846484769791397675, guid: 6c6e01367789f449a812f78d1861ca7d, type: 3}
+      propertyPath: parentTransform
+      value: 
+      objectReference: {fileID: 1877762549}
     - target: {fileID: 2332730141399857760, guid: 6c6e01367789f449a812f78d1861ca7d, type: 3}
       propertyPath: axe
       value: 
