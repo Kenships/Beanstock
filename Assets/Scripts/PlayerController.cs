@@ -34,6 +34,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private GameObject sliceEffect;
     [SerializeField] private ParticleSystem hitEffect;
     [SerializeField] private ParticleSystem wallJumpEffect;
+    [SerializeField] private ParticleSystem sliceEffect;
     [SerializeField] private ParticleSystem wallRunEffect;
     
     [Header("___TIMER CONFIG___")]
@@ -47,6 +48,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Transform axe;
     [SerializeField] private SpriteRenderer axeSprite;
     [SerializeField] private float axeSpinningSpeed;
+    [Header("___SHOTGUN CONFIG___")]
+    [SerializeField] private float shotSpeed;
+    [SerializeField] private ParticleSystem shootEffect;
+    [SerializeField] private Transform shotTransform;
+    [SerializeField] private LayerMask groundLayer;
     
     [Header("___RADAR DEBUG___")]
     [SerializeField] List<GameObject> enemiesInRadar;
@@ -120,6 +126,7 @@ public class PlayerController : MonoBehaviour
         inputReader.Jump.onEventRaised += Jump;
         inputReader.Move.onEventRaised += SetDirection;
         inputReader.Attack.onEventRaised += AttackStart;
+        inputReader.Shoot.onEventRaised += Shoot;
         _wallRunTimer.OnTimerStart += StartWallRunningParticles;
         _wallRunTimer.OnTimerEnd += StopWallRunningParticles;
         _wallCayoteTime.OnTimerEnd += DetachFromWall;
@@ -182,8 +189,8 @@ public class PlayerController : MonoBehaviour
         }
         else if(WallRunInput()){
             //wallrunning
-            SlerpRotate(playerSprite, _wallSide * 90, 15);
             _wallRunTimer.Restart(WallRunLingerTime);
+            SlerpRotate(playerSprite, _wallSide * 75, 15);
         }
         else{
             //sliding down wall
@@ -236,13 +243,30 @@ public class PlayerController : MonoBehaviour
     private void Jump(EmptyEventArgs args){
         
         if(_groundCayoteTime.IsRunning){
-            Debug.Log("Jump");
             _rb.linearVelocity = new Vector2(_rb.linearVelocityX, jumpSpeed);
             _groundCayoteTime.ForceEnd();
         }
     }
 
     
+
+    private void Shoot(EmptyEventArgs args){
+        Debug.Log("Shoot!");
+        if(_playerState == State.Moving){
+            if (TryLocateClosestTarget(out GameObject closestTarget))
+            {
+                Vector3 target = closestTarget.transform.position;
+
+                if(Vector3.Distance(transform.position, target) <= attackRange){
+                    //start attack
+                    playerSprite.up = GetAimPosition(transform.position, target);
+                    _rb.linearVelocity = playerSprite.up * shotSpeed;
+                    shootEffect.Play();
+                    shotTransform.up = playerSprite.up;
+                }
+            }
+        }
+    }
 
     private Vector3 GetAimPosition(Vector3 a, Vector3 b){
         return new Vector3(a.x - b.x, a.y - b.y) * -1;
@@ -260,7 +284,9 @@ public class PlayerController : MonoBehaviour
 
         WallInteraction();
         if(!_onGround)
-            _groundCayoteTime.Tick(Time.deltaTime);
+        if(_directionalInput.x != 0)
+            _direction = _directionalInput.x;
+        _attackReloadTimer.Tick(Time.deltaTime);
     }
 
     private void WallInteraction(){
@@ -372,7 +398,8 @@ public class PlayerController : MonoBehaviour
     
                 if(Vector3.Distance(transform.position, target) <= attackRange){
                     //start attack
-                    sliceEffect.SetActive(true);
+                    StartCoroutine(invincible(0.02f));
+                    sliceEffect.Play();
                     SetState(State.Attacking);
                     _attackTimer.Restart(attackLength);
                     playerSprite.up = GetAimPosition(transform.position, target);
@@ -392,7 +419,7 @@ public class PlayerController : MonoBehaviour
     public void OnAttackLanded(IDamageable damageable)
     {
         damageable.Damage(playerDamage);
-
+        
         attack.transform.up = playerSprite.up;
         
         _attackEffect.Play();
@@ -401,6 +428,8 @@ public class PlayerController : MonoBehaviour
         _attackTimer.ForceEnd();
         
         StartCoroutine(DashFollowThrough(0.006f));
+        StartCoroutine(Invincible(0.5f));
+        
     }
     private void EndDashAttack()
     {
@@ -473,9 +502,9 @@ public class PlayerController : MonoBehaviour
     /*-------------------------------*/
     //Remove me Later, Player is only responsible for knowing that it is on a zipline
     public void EndZipline(Vector3 inputVelocity){
-        _rb.linearVelocity = new Vector2(inputVelocity.x, 10);
-        //_rb.linearVelocity = inputVelocity * ziplineLaunchSpeed;
+        _rb.linearVelocity = new Vector2(inputVelocity.x, 30);
         _playerState = State.Moving;
+        invincible(0.3f);
     }
    
 }
