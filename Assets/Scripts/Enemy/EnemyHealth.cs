@@ -80,8 +80,13 @@ public class EnemyHealth : MonoBehaviour
     }
 
     void Die(){
-        _health = maxHealth;
-        GameObject MyRespawn = Instantiate(respawn, originalPosition, Quaternion.identity);
-        MyRespawn.GetComponent<RespawnHolder>().enemy = gameObject;
+        if(respawn == null){
+            Destroy(gameObject);
+        }
+        else{
+            _health = maxHealth;
+            GameObject MyRespawn = Instantiate(respawn, originalPosition, Quaternion.identity);
+            MyRespawn.GetComponent<RespawnHolder>().enemy = gameObject;
+        }
     }
 }

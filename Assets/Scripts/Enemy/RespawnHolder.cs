@@ -5,8 +5,6 @@ public class RespawnHolder : MonoBehaviour
 {
     public GameObject enemy;
     const float respawnTime = 3.5f;
-    private Vector3 respawnPosition;
-
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {

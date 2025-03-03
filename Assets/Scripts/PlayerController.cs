@@ -208,7 +208,9 @@ public class PlayerController : MonoBehaviour
     }
 
     private void Shoot(EmptyEventArgs args){
-        Debug.Log("Shoot!");
+
+        //parry?
+        
         if(_playerState == State.Moving){
             if (TryLocateClosestTarget(out GameObject closestTarget))
             {
