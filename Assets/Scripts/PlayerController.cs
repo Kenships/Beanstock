@@ -8,7 +8,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
 using Util;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour, IDamageable, ICanZipline
 {
     [Header("___EVENTS___")]
     [SerializeField] private BoolEventChannelSO onAttackEnable;
@@ -23,6 +23,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float jumpSpeed;
     [SerializeField] private float climbSpeed;
     [SerializeField] private float wallSlideDrag;
+    [SerializeField] private float ziplineBoost;
     
     [Header("___DASH ATTACK___")]
     [SerializeField] private float playerDamage;
@@ -444,7 +445,7 @@ public class PlayerController : MonoBehaviour
     IEnumerator DashFollowThrough(float time)
     {
         yield return TimeController.FreezeTime(time);;
-        _rb.linearVelocity = playerSprite.up * dashCompleteSpeed;
+        _rb.linearVelocity = _rb.linearVelocity.normalized * dashCompleteSpeed;
     }
     
     /*-------------------------------*/
@@ -502,9 +503,29 @@ public class PlayerController : MonoBehaviour
     /*__________ZIPLINE SYSTEM__________*/
     /*-------------------------------*/
     //Remove me Later, Player is only responsible for knowing that it is on a zipline
-    public void EndZipline(Vector3 inputVelocity){
-        _rb.linearVelocity = new Vector2(inputVelocity.x, 30);
-        _playerState = State.Moving;
+    public void StartZipline(){
+        _playerState = State.Ziplining;
     }
-   
+
+    public void EndZipline()
+    {
+        _playerState = State.Moving;
+        _rb.linearVelocity = new Vector2(transform.parent.GetComponent<Rigidbody2D>().linearVelocity.x, ziplineBoost);
+    }
+
+    //public void EndZipline(Vector3 inputVelocity){
+    //    _rb.linearVelocity = new Vector2(inputVelocity.x, 30);
+    //    _playerState = State.Moving;
+    //}
+
+
+    public void Damage(float damage)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void Die()
+    {
+        throw new System.NotImplementedException();
+    }
 }
