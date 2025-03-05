@@ -96,5 +96,11 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         GameObject MyRespawn = Instantiate(respawn, originalPosition, Quaternion.identity);
         MyRespawn.GetComponent<RespawnHolder>().enemy = gameObject;
     }
+
+
+
+    public float getHealth(){
+        return _health;
+    }
     
 }
