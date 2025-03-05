@@ -15,6 +15,8 @@ namespace Collisions
         {
             if(groundEvent == null)
                 groundEvent = ScriptableObject.CreateInstance<BoolEventChannelSO>();
+            if(parentTransform == null)
+                parentTransform = transform.parent;
         }
 
         private void OnTriggerEnter2D(Collider2D other) {
