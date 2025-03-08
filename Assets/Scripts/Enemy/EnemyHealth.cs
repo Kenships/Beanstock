@@ -20,9 +20,11 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     [SerializeField] private float hitDrag;
     private Color originalColor;
     private float _invinvible;
+    private Transform playerPosition;
 
     private void Awake() {
         originalColor = sprite.color;
+        playerPosition = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -56,11 +58,10 @@ public class EnemyHealth : MonoBehaviour, IDamageable
 
     IEnumerator GetHit()
     {
-        Vector3 playerPosition;
         //knock back
-        //transform.up = GetAimPosition(transform.position, playerPosition) * -1;
-        //_rb.linearVelocity = transform.up * hitSpeed;
-        //transform.up = Vector3.zero;
+        transform.up = GetAimPosition(transform.position, playerPosition.position) * -1;
+        _rb.linearVelocity = transform.up * hitSpeed;
+        transform.up = Vector3.zero;
         //end of knockback
 
         sprite.material = flash;

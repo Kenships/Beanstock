@@ -39,7 +39,7 @@ namespace Collisions
 
         public void OnTriggerEnter2D(Collider2D other)
         {
-            Debug.Log("ENTER");
+            //Debug.Log("ENTER");
             onCollisionEnter.RaiseEvent(other.gameObject);
         }
     }

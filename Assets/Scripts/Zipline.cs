@@ -113,7 +113,7 @@ public class Zipline : MonoBehaviour
 
     public void StartZip(GameObject inputObj){
         //starts when player touches the zip
-        Debug.Log("ZIP");
+        //Debug.Log("ZIP");
         if (!inputObj.TryGetComponent(out ICanZipline zipliner)) return;
         
         GameObject zipHolder = Instantiate(zipHandlePrefab, FindClosestPoint(inputObj.transform, point1.position, point2.position - point1.position), Quaternion.identity);
