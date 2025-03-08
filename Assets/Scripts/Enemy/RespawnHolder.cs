@@ -1,23 +1,35 @@
 using System.Collections;
 using UnityEngine;
 
-public class RespawnHolder : MonoBehaviour
+namespace Enemy
 {
-    public GameObject enemy;
-    const float respawnTime = 3.5f;
-    private Vector3 respawnPosition;
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public class RespawnHolder : MonoBehaviour
     {
-        StartCoroutine(DoRespawn());
-    }
+        public GameObject RespawnObject
+        {
+            get => _respawnObject;
+            set
+            {
+                _respawnObject = value;
+                StartCoroutine(DoRespawn());
+            }
+        }
 
-    IEnumerator DoRespawn(){
-        enemy.SetActive(false);
-        yield return new WaitForSeconds(respawnTime);
-        enemy.SetActive(true);
-        enemy.transform.position = transform.position;
-        Destroy(gameObject);
+        private GameObject _respawnObject;
+        private const float RespawnTime = 3.5f;
+
+        public void Respawn(GameObject gameObject)
+        {
+            _respawnObject = gameObject;
+            StartCoroutine(DoRespawn());
+        }
+
+        IEnumerator DoRespawn(){
+            RespawnObject.SetActive(false);
+            yield return new WaitForSeconds(RespawnTime);
+            RespawnObject.SetActive(true);
+            RespawnObject.transform.position = transform.position;
+            ObjectPoolManager.RecycleObject(gameObject);
+        }
     }
 }

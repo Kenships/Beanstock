@@ -9,7 +9,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
 using Util;
 
-public class PlayerController : MonoBehaviour, IDamageable, ICanZipline
+public class PlayerController : MonoBehaviour, ICanZipline
 {
     [Header("___EVENTS___")]
     [SerializeField] private BoolEventChannelSO onAttackEnable;
@@ -98,8 +98,9 @@ public class PlayerController : MonoBehaviour, IDamageable, ICanZipline
         if(healthManager == null) Debug.LogWarning("HealthManager is not assigned to " + gameObject.name);
         else
         {
-            //healthManager.OnDamage.onEventRaised += OnDamaged;
-            //healthManager.OnHeal.onEventRaised += OnHeal;
+            healthManager.OnDamage.onEventRaised += OnDamaged;
+            healthManager.OnHeal.onEventRaised += OnHeal;
+            healthManager.OnDie.onEventRaised += OnDie;
         }
         _attackEffect = attack.GetComponent<ParticleSystem>();
         inputReader.EnablePlayerActions();
@@ -160,7 +161,6 @@ public class PlayerController : MonoBehaviour, IDamageable, ICanZipline
                 Move();
                 break;
             case State.Attacking:
-                gameObject.tag = "Player Attack";
                 DashMovement();
                 break;
             case State.Ziplining:
@@ -262,7 +262,6 @@ public class PlayerController : MonoBehaviour, IDamageable, ICanZipline
         
         if(_groundCayoteTime.IsRunning){
             _rb.linearVelocity = new Vector2(_rb.linearVelocityX, jumpSpeed);
-            _groundCayoteTime.ForceEnd();
             _animator.SetTrigger("Jump");
         }
     }
@@ -377,9 +376,14 @@ public class PlayerController : MonoBehaviour, IDamageable, ICanZipline
         { 
             _groundCayoteTime.Restart(cayoteTimeMax);
         }
+        else
+        {
+            _groundCayoteTime.ForceEnd();
+        }
     }
 
     public void SetOnWall(int set){
+        Debug.Log("OnWall = " + set);
         if (set == 0)
         {
             _wallCayoteTime.Restart(wallCayoteTimeMax);
@@ -394,16 +398,22 @@ public class PlayerController : MonoBehaviour, IDamageable, ICanZipline
     {
         _wallSide = 0;
     }
+    /*--------------------------*/
+    /*__________HEALTH__________*/
+    /*--------------------------*/
     private void OnHeal(float healthRemaining){
         //can put some particle effects here or something
         Debug.Log("Healed to " + healthRemaining);
     }
     private void OnDamaged(float damage){
-        
         hitEffect.Play();
         StartCoroutine(TimeController.FreezeTime(0.01f));
         _invincibility.Restart(invincibilityMax);
-        
+    }
+
+    private void OnDie(GameObject gameObject)
+    {
+        Debug.Log("Player Died");
     }
     /*-------------------------------*/
     /*__________DASH ATTACK__________*/
@@ -528,9 +538,9 @@ public class PlayerController : MonoBehaviour, IDamageable, ICanZipline
         return true;
     }
     
-    /*-------------------------------*/
+    /*----------------------------------*/
     /*__________ZIPLINE SYSTEM__________*/
-    /*-------------------------------*/
+    /*----------------------------------*/
     //Remove me Later, Player is only responsible for knowing that it is on a zipline
     public void StartZipline(){
         _playerState = State.Ziplining;
@@ -540,21 +550,5 @@ public class PlayerController : MonoBehaviour, IDamageable, ICanZipline
     {
         _playerState = State.Moving;
         _rb.linearVelocity = new Vector2(transform.parent.GetComponent<Rigidbody2D>().linearVelocity.x, ziplineBoost);
-    }
-
-    //public void EndZipline(Vector3 inputVelocity){
-    //    _rb.linearVelocity = new Vector2(inputVelocity.x, 30);
-    //    _playerState = State.Moving;
-    //}
-
-
-    public void Damage(float damage)
-    {
-        throw new System.NotImplementedException();
-    }
-
-    public void Die()
-    {
-        throw new System.NotImplementedException();
     }
 }

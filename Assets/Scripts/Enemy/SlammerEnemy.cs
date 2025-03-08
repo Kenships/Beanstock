@@ -1,42 +1,61 @@
+using DamageManagement;
+using Enemy;
+using Events.Channels;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Util;
 
-public class SlammerEnemy : MonoBehaviour
+public class SlammerEnemy : AbstractEnemy
 {
-    private Rigidbody2D _rb;
     private Timer _riseTimer;
     private Timer _fallTimer;
-    
-    private Vector3 originalPosition;
-    private const float jumpHeight = 8;
+    private const float JumpHeight = 8;
+    [Header("___Slammer Config___")]
     [SerializeField] private float riseSpeed;
     [SerializeField] private float fallSpeed;
     [SerializeField] private float topWaitTime;
     [SerializeField] private float bottomWaitTime;
+    [SerializeField] private AttackCollider attackCollider;
     public GameObject attack;
     private bool _rising;
 
-    void Awake()
+    private new void Awake()
     {
-        originalPosition = transform.position;
-        _rb = gameObject.GetComponent<Rigidbody2D>();
+        base.Awake();
         _riseTimer = new Timer(topWaitTime);
         _fallTimer = new Timer(bottomWaitTime);
     }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private new void Start()
     {
+        base.Start();
         _riseTimer.OnTimerEnd += Fall;
         _fallTimer.OnTimerEnd += Rise;
+        AttackDurationTimer.OnTimerStart += StartAttack;
+        AttackDurationTimer.OnTimerEnd += EndAttack;
+        attackCollider.OnAttackGameObject.onEventRaised += AttackObject;
+
+        Transform attackTransform = attackCollider.gameObject.transform;
+        attackCollider.gameObject.transform.localScale = new Vector3(attackRange * attackTransform.localScale.x, attackTransform.localScale.y);
     }
 
+    private void AttackObject(GameObject bogie)
+    {
+        if (bogie.CompareTag("Player"))
+        {
+            bogie.GetComponent<IDamageable>().Damage(attackDamage);
+        }
+    }
+    
+   
     // Update is called once per frame
     void Update()
     {   
         //rising to top
         if(_rising){
+            if(!AttackDurationTimer.IsRunning) AttackDurationTimer.Restart();
             //rise
-            if(transform.position.y < originalPosition.y + jumpHeight){
+            if(transform.position.y < _originalPosition.y + JumpHeight){
                 _rb.linearVelocity += new Vector2(0, riseSpeed) * Time.deltaTime;
             }
             else{
@@ -47,16 +66,26 @@ public class SlammerEnemy : MonoBehaviour
         }
         else{
             //desend
-            if(transform.position.y > originalPosition.y + 1){
+            if(transform.position.y > _originalPosition.y + 1){
                 _rb.linearVelocity += new Vector2(0, -fallSpeed) * Time.deltaTime;
             }
             else{
                 //wait at bottom
+                AttackDurationTimer.Tick(Time.deltaTime);
                 _fallTimer.Tick(Time.deltaTime);
             }
         }
     }
 
+    private void StartAttack()
+    {
+        attackCollider.OnAttackEnable.RaiseEvent(true);
+    }
+
+    private void EndAttack()
+    {
+        attackCollider.OnAttackEnable.RaiseEvent(false);
+    }
     private void Rise()
     {
         _fallTimer.Restart();

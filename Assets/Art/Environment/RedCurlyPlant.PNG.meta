@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      RedCurlyPlant_0: -91374199387199792
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

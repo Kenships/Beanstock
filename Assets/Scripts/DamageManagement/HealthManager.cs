@@ -11,15 +11,17 @@ public class HealthManager : MonoBehaviour, IDamageable
     [SerializeField] private FloatEventChannelSO onHeal;
     [SerializeField] private FloatEventChannelSO onHealthSet;
     [SerializeField] private GameObjectEventChannelSO onDie;
+    [SerializeField] private GameObjectEventChannelSO onRespawn;
     public FloatEventChannelSO OnDamage => onDamage;
     public FloatEventChannelSO OnHeal => onHeal;
     public FloatEventChannelSO OnHealthSet => onHealthSet;
     public GameObjectEventChannelSO OnDie => onDie;
-    private float _health;
+    public GameObjectEventChannelSO OnRespawn => onRespawn;
+    [SerializeField] private float health;
 
     private void Awake()
     {
-        _health = maxHealth;
+        health = maxHealth;
         if(onDamage == null)
             onDamage = ScriptableObject.CreateInstance<FloatEventChannelSO>();
         if (onHeal == null)
@@ -28,6 +30,8 @@ public class HealthManager : MonoBehaviour, IDamageable
             onHealthSet = ScriptableObject.CreateInstance<FloatEventChannelSO>();
         if (onDie == null)
             onDie = ScriptableObject.CreateInstance<GameObjectEventChannelSO>();
+        if (onRespawn == null)
+            onRespawn = ScriptableObject.CreateInstance<GameObjectEventChannelSO>();
     }
     public virtual void Die()
     {
@@ -35,11 +39,11 @@ public class HealthManager : MonoBehaviour, IDamageable
     }
     public void Damage(float damage)
     {
-        _health -= damage;
-        onDamage.onEventRaised?.Invoke((int)_health);
-        if (_health <= 0f)
+        health -= damage;
+        onDamage.onEventRaised?.Invoke((int)health);
+        if (health <= 0f)
         {
-            _health = 0f;
+            health = 0f;
             Die();
         }
         
@@ -47,24 +51,25 @@ public class HealthManager : MonoBehaviour, IDamageable
 
     public void Reset()
     {
-        _health = maxHealth;
+        health = maxHealth;
+        onRespawn.onEventRaised?.Invoke(gameObject);
     }
     public void Heal(float heal)
     {
-        _health += heal;
-        if (_health > maxHealth)
-            _health = maxHealth;
-        onHeal.onEventRaised?.Invoke(_health);
+        health += heal;
+        if (health > maxHealth)
+            health = maxHealth;
+        onHeal.onEventRaised?.Invoke(health);
     }
     
     public void SetHealth(float health)
     {
-        _health = health;
-        onHealthSet.onEventRaised?.Invoke(_health);
+        this.health = health;
+        onHealthSet.onEventRaised?.Invoke(this.health);
     }
     
     public float GetHealth()
     {
-        return _health;
+        return health;
     }
 }

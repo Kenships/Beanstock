@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Runtime.CompilerServices;
 using DamageManagement;
+using Enemy;
 using Unity.Cinemachine;
 using UnityEngine;
 
@@ -95,7 +96,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     public void Die(){
         _health = maxHealth;
         GameObject MyRespawn = Instantiate(respawn, originalPosition, Quaternion.identity);
-        MyRespawn.GetComponent<RespawnHolder>().enemy = gameObject;
+        MyRespawn.GetComponent<RespawnHolder>().RespawnObject = gameObject;
     }
 
 

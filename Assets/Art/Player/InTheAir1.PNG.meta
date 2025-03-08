@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      InTheAir1_0: 7591835311794551310
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
