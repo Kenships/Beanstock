@@ -164,6 +164,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ICanZipline
                 DashMovement();
                 break;
             case State.Ziplining:
+                SlerpRotate(playerSprite, _direction * 75, 10);
                 break;
         }
         //jittery camera
@@ -200,7 +201,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ICanZipline
                 SlerpRotate(playerSprite, -_rb.linearVelocityX * 1.5f, 10);
             }
             else{
-                SlerpRotate(playerSprite, -_rb.linearVelocityX * 0.5f, 3);
+                SlerpRotate(playerSprite, -_rb.linearVelocityX * -1f, 3);
             }
         }
         else if(WallRunInput()){
@@ -218,16 +219,16 @@ public class PlayerController : MonoBehaviour, IDamageable, ICanZipline
         //axe.position = Vector3.Lerp(axe.position, transform.position + new Vector3(_directionalInput.x * 0.2f, 0), AxeFollowSpeed * Time.deltaTime);
         //axe.position = transform.position;
 
-        if(_dashAttackCooldown.IsRunning){
+        if(_dashAttackCooldown.IsRunning || _playerState == State.Attacking){
             //SlerpRotate(axe, direction * -170, _axeRotationSpeed * Time.deltaTime);
             axe.Rotate(0, 0, -axeSpinningSpeed * _direction * Time.deltaTime);
         }
         else{
             //axe.eulerAngles = new Vector3(0, 0, -0.1f * _rb.linearVelocity.x);
-            SlerpRotate(axe, _directionalInput.x * 30, AxeRotationSpeed * Time.deltaTime);
+            SlerpRotate(axe, _directionalInput.x * 20, AxeRotationSpeed * Time.deltaTime);
         }
 
-        axeSprite.flipX =  (int) _direction != 1;
+        axeSprite.flipX =  (int) _direction == 1;
     }
 
     private void StartWallRunningParticles()
@@ -414,7 +415,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ICanZipline
         AttackStart(new EmptyEventArgs());
     }
     private void AttackStart(EmptyEventArgs args){
-            
+        _animator.ResetTrigger("Jump");
         if(_playerState == State.Moving && _canAttack){
             if (TryLocateClosestTarget(out GameObject closestTarget))
             {
@@ -454,10 +455,12 @@ public class PlayerController : MonoBehaviour, IDamageable, ICanZipline
         
         if(Physics2D.BoxCast(transform.position, new Vector2(1, 6), 0, Vector2.zero, 0, groundLayer)){
             //bounce
-            _rb.linearVelocity = new Vector2(_rb.linearVelocityX, 70);
+            _rb.linearVelocity = new Vector2(_rb.linearVelocityX, 55);
+            StartCoroutine(TimeController.FreezeTime(0.005f));
             //Debug.Log("On ground!");
         }else{
-            StartCoroutine(DashFollowThrough(0.005f));
+            StartCoroutine(DashFollowThrough());
+            StartCoroutine(TimeController.FreezeTime(0.009f));
         }
         
     }
@@ -470,9 +473,8 @@ public class PlayerController : MonoBehaviour, IDamageable, ICanZipline
         _animator.SetBool("Attacking", false);
     }
     
-    IEnumerator DashFollowThrough(float time)
+    IEnumerator DashFollowThrough()
     {
-        StartCoroutine(TimeController.FreezeTime(time));
         yield return null;
         _rb.linearVelocity = playerSprite.up * dashCompleteSpeed;
     }
