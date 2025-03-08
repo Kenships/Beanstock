@@ -7,6 +7,9 @@ using Util;
 
 public abstract class AbstractEnemy : MonoBehaviour
 {
+    
+    [Header("___RESPAWN___")]
+    [SerializeField] private GameObject respawnPosition;
     [Header("___ENEMY STATS___")]
     [SerializeField] private float damage;
     [SerializeField] private float attackRange;
@@ -20,8 +23,9 @@ public abstract class AbstractEnemy : MonoBehaviour
     [SerializeField] private RadarCollider radarCollider;
     [SerializeField] private GroundCheckCollider groundCheckCollider;
     [SerializeField] private GameObject enemySprite;
+    [SerializeField] private Rigidbody2D rb;
     [Header("___RADAR DEBUG___")]
-    [SerializeField] private List<GameObject> inRangeBogies;
+    [SerializeField] protected List<GameObject> inRangeBogies;
     
     protected Timer AttackCooldownTimer;
     protected Timer AttackDurationTimer;
@@ -51,8 +55,16 @@ public abstract class AbstractEnemy : MonoBehaviour
     }
 
     public abstract void AttackStart();
-    
-    protected abstract void ProcessBogie(RadarInfo radarInfo);
+
+    protected virtual void ProcessBogie(RadarInfo radarInfo)
+    {
+        if (!radarInfo.Bogie.CompareTag("Enemy")) return;
+        
+        if(radarInfo.InRange)
+            AddBogie(radarInfo.Bogie);
+        else
+            RemoveBogie(radarInfo.Bogie);
+    }
     
     protected void AddBogie(GameObject bogie)
     {

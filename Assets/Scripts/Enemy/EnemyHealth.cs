@@ -13,7 +13,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     [SerializeField] private SpriteRenderer sprite;
     [SerializeField] private GameObject respawn;
     private const float _flashTime = 0.3f;
-    [SerializeField ]private Material normal;
+    [SerializeField] private Material normal;
     [SerializeField] private Material flash;
     private Rigidbody2D _rb;
     [SerializeField] private float hitSpeed;
