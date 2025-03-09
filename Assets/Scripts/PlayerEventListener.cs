@@ -8,6 +8,7 @@ public class PlayerEventListener : MonoBehaviour
     [SerializeField] private IntEventChannelSO playerWallChannel;
     [SerializeField] private RadarEventChannelSO radar;
     [SerializeField] private IDamageableEventChannelSO playerAttackLanded;
+    [SerializeField] private GameObjectEventChannelSO onCheckPoint;
     [SerializeField] public PlayerController player;
     public void Start()
     {
@@ -15,5 +16,6 @@ public class PlayerEventListener : MonoBehaviour
         playerWallChannel.onEventRaised += player.SetOnWall;
         radar.onEventRaised += player.ProcessBogie;
         playerAttackLanded.onEventRaised += player.OnAttackLanded;
+        onCheckPoint.onEventRaised += player.SetCheckpoint;
     }
 }
