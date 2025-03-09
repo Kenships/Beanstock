@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using DamageManagement;
+using DefaultNamespace;
+using Enemy;
 using Events.Channels;
 using Events.Input;
 using UnityEditor.Experimental.GraphView;
@@ -60,10 +62,15 @@ public class PlayerController : MonoBehaviour, ICanZipline
     
     [Header("___RADAR DEBUG___")]
     [SerializeField] List<GameObject> enemiesInRadar;
-    [Header("___ANIMATION___")]
-    [SerializeField] private SpriteRenderer _spriteRenderer;
-    [SerializeField] private Animator _animator;
     
+    
+    [Header("___ANIMATION___")]
+    [FormerlySerializedAs("_spriteRenderer")][SerializeField] private SpriteRenderer spriteRenderer;
+    [FormerlySerializedAs("_animator")] [SerializeField] private Animator animator;
+    
+    [Header("___CHECKPOINT___")]
+    [SerializeField] private CheckPoint defaultCheckPoint;
+    [SerializeField] private GameObject respawnHolder;
 
     private const float AxeFollowSpeed = 50;
     private const float AxeRotationSpeed = 300;
@@ -79,6 +86,7 @@ public class PlayerController : MonoBehaviour, ICanZipline
     private Vector3 _directionalInput;
     private Rigidbody2D _rb;
     private List<Timer> _timers;
+    [SerializeField] private CheckPoint _checkPoint;
     private Timer _wallRunTimer;
     private Timer _groundCayoteTime;
     private Timer _wallCayoteTime;
@@ -187,9 +195,9 @@ public class PlayerController : MonoBehaviour, ICanZipline
 
     private void SetSpriteDirection(){
         if(_direction == 1)
-            _spriteRenderer.flipX = true;
+            spriteRenderer.flipX = true;
         else
-            _spriteRenderer.flipX = false;
+            spriteRenderer.flipX = false;
     }
 
     private void SetRunningSpriteRotation()
@@ -262,7 +270,7 @@ public class PlayerController : MonoBehaviour, ICanZipline
         
         if(_groundCayoteTime.IsRunning){
             _rb.linearVelocity = new Vector2(_rb.linearVelocityX, jumpSpeed);
-            _animator.SetTrigger("Jump");
+            animator.SetTrigger("Jump");
         }
     }
 
@@ -304,7 +312,7 @@ public class PlayerController : MonoBehaviour, ICanZipline
         if(!_onGround)
             _groundCayoteTime.Tick(Time.deltaTime);
         else
-            _animator.SetFloat("Speed", Mathf.Abs(_rb.linearVelocityX));
+            animator.SetFloat("Speed", Mathf.Abs(_rb.linearVelocityX));
         if(_directionalInput.x != 0)
             _direction = _directionalInput.x;
 
@@ -312,14 +320,14 @@ public class PlayerController : MonoBehaviour, ICanZipline
 
     private void WallInteraction(){
         //if the players touching a wall
-        _animator.SetBool("WallRunning", false);
+        animator.SetBool("WallRunning", false);
         if (_wallSide != 0)
         {
             if(WallRunInput()){
                 //wall running
                 _rb.linearVelocity = new Vector2(_rb.linearVelocityX, climbSpeed);
                 _wallRunTimer.Restart(WallRunLingerTime);
-                _animator.SetBool("WallRunning", true);
+                animator.SetBool("WallRunning", true);
             }
             else if(Mathf.Approximately(_directionalInput.x, -_wallSide) && Mathf.Approximately(_directionalInput.y, 1)){
                 //wall jump
@@ -371,7 +379,7 @@ public class PlayerController : MonoBehaviour, ICanZipline
     public void SetOnGround(bool set){
         //Debug.Log("OnGround = " + set);
         _onGround = set;
-        _animator.SetBool("OnGround", set);
+        animator.SetBool("OnGround", set);
         if (_onGround)
         { 
             _groundCayoteTime.Restart(cayoteTimeMax);
@@ -406,6 +414,7 @@ public class PlayerController : MonoBehaviour, ICanZipline
         Debug.Log("Healed to " + healthRemaining);
     }
     private void OnDamaged(float damage){
+        if(damage <= 0) return;
         hitEffect.Play();
         StartCoroutine(TimeController.FreezeTime(0.01f));
         _invincibility.Restart(invincibilityMax);
@@ -413,7 +422,11 @@ public class PlayerController : MonoBehaviour, ICanZipline
 
     private void OnDie(GameObject gameObject)
     {
-        Debug.Log("Player Died");
+        healthManager.Reset();
+        if(_checkPoint == null){
+            _checkPoint = defaultCheckPoint;
+        }
+        transform.position = _checkPoint.transform.position;
     }
     /*-------------------------------*/
     /*__________DASH ATTACK__________*/
@@ -437,7 +450,7 @@ public class PlayerController : MonoBehaviour, ICanZipline
                     SetState(State.Attacking);
                     _attackTimer.Restart(attackLength);
                     playerSprite.up = GetAimPosition(transform.position, target);
-                    _animator.SetBool("Attacking", true);
+                    animator.SetBool("Attacking", true);
                 }
             }
         }
@@ -477,7 +490,7 @@ public class PlayerController : MonoBehaviour, ICanZipline
         SetState(State.Moving);
         _dashAttackCooldown.Restart(dashAttackCooldown);
         onAttackEnable.RaiseEvent(false);
-        _animator.SetBool("Attacking", false);
+        animator.SetBool("Attacking", false);
     }
     
     IEnumerator DashFollowThrough(float time)
@@ -550,5 +563,15 @@ public class PlayerController : MonoBehaviour, ICanZipline
     {
         _playerState = State.Moving;
         _rb.linearVelocity = new Vector2(transform.parent.GetComponent<Rigidbody2D>().linearVelocity.x, ziplineBoost);
+    }
+    /*------------------------------*/
+    /*__________Checkpoint__________*/
+    /*------------------------------*/
+    public void SetCheckpoint(GameObject checkpoint)
+    {
+        CheckPoint spawn = checkpoint.GetComponent<CheckPoint>();
+        if(!_checkPoint || spawn.CheckPointIndex > _checkPoint.CheckPointIndex){
+            _checkPoint = spawn;
+        }
     }
 }

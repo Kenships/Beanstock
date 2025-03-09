@@ -23,8 +23,14 @@ namespace Enemy
             _respawnObject = gameObject;
             StartCoroutine(DoRespawn());
         }
+        public void InstantRespawn(GameObject gameObject)
+        {
+            _respawnObject = gameObject;
+            RespawnObject.transform.position = transform.position;
+            ObjectPoolManager.RecycleObject(gameObject);
+        }
 
-        IEnumerator DoRespawn(){
+        IEnumerator DoRespawn(float respawnTime = RespawnTime){
             RespawnObject.SetActive(false);
             yield return new WaitForSeconds(RespawnTime);
             RespawnObject.SetActive(true);

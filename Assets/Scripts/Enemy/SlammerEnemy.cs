@@ -1,9 +1,10 @@
 using DamageManagement;
 using Enemy;
 using Events.Channels;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
-using Util;
+using Timer = Util.Timer;
 
 public class SlammerEnemy : AbstractEnemy
 {
@@ -34,6 +35,7 @@ public class SlammerEnemy : AbstractEnemy
         AttackDurationTimer.OnTimerStart += StartAttack;
         AttackDurationTimer.OnTimerEnd += EndAttack;
         attackCollider.OnAttackGameObject.onEventRaised += AttackObject;
+        groundCheckCollider.GroundEvent.onEventRaised += SetGrounded;
 
         Transform attackTransform = attackCollider.gameObject.transform;
         attackCollider.gameObject.transform.localScale = new Vector3(attackRange * attackTransform.localScale.x, attackTransform.localScale.y);
@@ -97,7 +99,10 @@ public class SlammerEnemy : AbstractEnemy
         _riseTimer.Restart();
         _rising = false;
     }
-
+    private void SetGrounded(bool grounded)
+    {
+        
+    }
     private void OnCollisionEnter2D(Collision2D other) {
         if(other.gameObject.CompareTag("Ground")){
             Instantiate(attack, transform.position + new Vector3(0, -0.5f), Quaternion.identity);
