@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using DamageManagement;
@@ -10,7 +11,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
 using Util;
-
+[RequireComponent(typeof(HealthManager))]
 public class PlayerController : MonoBehaviour, ICanZipline
 {
     [Header("___EVENTS___")]
@@ -103,13 +104,7 @@ public class PlayerController : MonoBehaviour, ICanZipline
 
     private void Awake()
     {
-        if(healthManager == null) Debug.LogWarning("HealthManager is not assigned to " + gameObject.name);
-        else
-        {
-            healthManager.OnDamage.onEventRaised += OnDamaged;
-            healthManager.OnHeal.onEventRaised += OnHeal;
-            healthManager.OnDie.onEventRaised += OnDie;
-        }
+        
         _attackEffect = attack.GetComponent<ParticleSystem>();
         inputReader.EnablePlayerActions();
         _rb = gameObject.GetComponent<Rigidbody2D>();
@@ -138,7 +133,11 @@ public class PlayerController : MonoBehaviour, ICanZipline
         enemiesInRadar = new List<GameObject>();
     }
 
-    private void Start(){
+    private void OnEnable(){
+        healthManager.Initialize();
+        healthManager.OnDamage.onEventRaised += OnDamaged;
+        healthManager.OnHeal.onEventRaised += OnHeal;
+        healthManager.OnDie.onEventRaised += OnDie;
         inputReader.Jump.onEventRaised += Jump;
         inputReader.Move.onEventRaised += SetDirection;
         inputReader.Attack.onEventRaised += AttackStart;
@@ -147,12 +146,33 @@ public class PlayerController : MonoBehaviour, ICanZipline
         _wallRunTimer.OnTimerEnd += StopWallRunningParticles;
         _wallCayoteTime.OnTimerEnd += DetachFromWall;
         _attackTimer.OnTimerEnd += EndDashAttack;
-        _dashAttackCooldown.OnTimerStart += () => _canAttack = false;
-        _dashAttackCooldown.OnTimerEnd += () => _canAttack = true;
+        _dashAttackCooldown.OnTimerStart += DisableAttack;
+        _dashAttackCooldown.OnTimerEnd += EnableAttack;
         _dashAttackBuffer.OnTimerEnd += ForceStartDashAttack;
         SetState(State.Moving);
     }
-    
+
+    private void OnDisable()
+    {
+        StopAllCoroutines();
+        TimeController.SetTime(1);
+        
+        healthManager.OnDamage.onEventRaised -= OnDamaged;
+        healthManager.OnHeal.onEventRaised -= OnHeal;
+        healthManager.OnDie.onEventRaised -= OnDie;
+        inputReader.Jump.onEventRaised -= Jump;
+        inputReader.Move.onEventRaised -= SetDirection;
+        inputReader.Attack.onEventRaised -= AttackStart;
+        inputReader.Shoot.onEventRaised -= Shoot;
+        _wallRunTimer.OnTimerStart -= StartWallRunningParticles;
+        _wallRunTimer.OnTimerEnd -= StopWallRunningParticles;
+        _wallCayoteTime.OnTimerEnd -= DetachFromWall;
+        _attackTimer.OnTimerEnd -= EndDashAttack;
+        _dashAttackCooldown.OnTimerStart -= DisableAttack;
+        _dashAttackCooldown.OnTimerEnd -= EnableAttack;
+        _dashAttackBuffer.OnTimerEnd -= ForceStartDashAttack;
+    }
+
     private enum State{
         Moving,
         Attacking,
@@ -391,7 +411,6 @@ public class PlayerController : MonoBehaviour, ICanZipline
     }
 
     public void SetOnWall(int set){
-        Debug.Log("OnWall = " + set);
         if (set == 0)
         {
             _wallCayoteTime.Restart(wallCayoteTimeMax);
@@ -414,7 +433,7 @@ public class PlayerController : MonoBehaviour, ICanZipline
         Debug.Log("Healed to " + healthRemaining);
     }
     private void OnDamaged(float damage){
-        if(damage <= 0) return;
+        if(damage <= 0 || _invincibility.IsRunning) return;
         hitEffect.Play();
         StartCoroutine(TimeController.FreezeTime(0.01f));
         _invincibility.Restart(invincibilityMax);
@@ -422,15 +441,31 @@ public class PlayerController : MonoBehaviour, ICanZipline
 
     private void OnDie(GameObject gameObject)
     {
+        if (!_checkPoint) _checkPoint = defaultCheckPoint;
+        RespawnHolder myRespawn = ObjectPoolManager.SpawnObject(respawnHolder, _checkPoint.transform.position, Quaternion.identity)
+            .GetComponent<RespawnHolder>();
+        myRespawn.Respawn(gameObject, 0.2f);
+        
         healthManager.Reset();
-        if(_checkPoint == null){
-            _checkPoint = defaultCheckPoint;
-        }
-        transform.position = _checkPoint.transform.position;
+        
+        enemiesInRadar.Clear();
+        //if(_checkPoint == null){
+        //    _checkPoint = defaultCheckPoint;
+        //}
+        //transform.position = _checkPoint.transform.position;
     }
     /*-------------------------------*/
     /*__________DASH ATTACK__________*/
     /*-------------------------------*/
+    private void EnableAttack()
+    {
+        _canAttack = true;
+    }
+
+    private void DisableAttack()
+    {
+        _canAttack = false;
+    }
     private void ForceStartDashAttack(){
         //insures that the player can attack after the buffer ends
         _dashAttackCooldown.ForceEnd();

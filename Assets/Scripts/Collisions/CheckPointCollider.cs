@@ -10,7 +10,6 @@ namespace Collisions
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            Debug.Log("checkpoint");
             onCheckPoint.RaiseEvent(other.gameObject);
         }
     }
