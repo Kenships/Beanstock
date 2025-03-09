@@ -4901,55 +4901,6 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
---- !u!1 &1853818992395841132
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 406530137910282067}
-  - component: {fileID: 3459185989504093034}
-  m_Layer: 0
-  m_Name: PlayerHealth
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &406530137910282067
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1853818992395841132}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 4727674313312519339}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3459185989504093034
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1853818992395841132}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1c5e8b2a58113674e8e522e6e56e65e0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHealth: 1
-  onDamage: {fileID: 0}
-  onHeal: {fileID: 0}
-  onHealthSet: {fileID: 0}
-  onDie: {fileID: 0}
 --- !u!1 &1883179440585506027
 GameObject:
   m_ObjectHideFlags: 0
@@ -19763,6 +19714,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   onAttackEnable: {fileID: 11400000, guid: ffcb4e1f76b65b94199da4aac23f8a2f, type: 2}
   onPlayerAttackLanded: {fileID: 11400000, guid: 21d6080cc6171ea468c9cad5abb35a17, type: 2}
+  onAttackGameObject: {fileID: 0}
   playerTransform: {fileID: 4727674313312519339}
 --- !u!1 &3715037989865204769
 GameObject:
@@ -29793,6 +29745,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   groundEvent: {fileID: 11400000, guid: eb3b8c3bfd86b46beb8ef7b53f8f1cbc, type: 2}
   parentTransform: {fileID: 4727674313312519339}
+  isGrounded: 0
 --- !u!1 &5151199131573863594
 GameObject:
   m_ObjectHideFlags: 0
@@ -44725,6 +44678,7 @@ GameObject:
   - component: {fileID: 2449040770975972606}
   - component: {fileID: 1412064604733299009}
   - component: {fileID: 7210495915975023206}
+  - component: {fileID: 6621786534630935979}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -44757,7 +44711,6 @@ Transform:
   - {fileID: 1042558936800613105}
   - {fileID: 7947266926335890192}
   - {fileID: 3079264748839127797}
-  - {fileID: 406530137910282067}
   - {fileID: 391660678541558346}
   - {fileID: 7163581855024873258}
   m_Father: {fileID: 0}
@@ -44803,7 +44756,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   onAttackEnable: {fileID: 11400000, guid: ffcb4e1f76b65b94199da4aac23f8a2f, type: 2}
   inputReader: {fileID: 11400000, guid: 96066849e81e6ca40a6947edb52c1f16, type: 2}
-  healthManager: {fileID: 3459185989504093034}
+  healthManager: {fileID: 6621786534630935979}
   wallJumpSpeed: {x: 25, y: 20}
   attack: {fileID: 1883179440585506027}
   playerSprite: {fileID: 689118772495629831}
@@ -44837,6 +44790,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   enemiesInRadar: []
+  _spriteRenderer: {fileID: 0}
+  _animator: {fileID: 0}
 --- !u!61 &2449040770975972606
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -44928,6 +44883,25 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &6621786534630935979
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7182020811009081600}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c5e8b2a58113674e8e522e6e56e65e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 1
+  onDamage: {fileID: 0}
+  onHeal: {fileID: 0}
+  onHealthSet: {fileID: 0}
+  onDie: {fileID: 0}
+  onRespawn: {fileID: 0}
+  health: 0
 --- !u!1 &7575857169930750292
 GameObject:
   m_ObjectHideFlags: 0
