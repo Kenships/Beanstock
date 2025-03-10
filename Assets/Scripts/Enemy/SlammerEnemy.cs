@@ -55,7 +55,7 @@ public class SlammerEnemy : AbstractEnemy
     {   
         //rising to top
         if(_rising){
-            if(!AttackDurationTimer.IsRunning) AttackDurationTimer.Restart();
+            if(!AttackDurationTimer.IsRunning) AttackDurationTimer.Restart(attackDuration);
             //rise
             if(transform.position.y < _originalPosition.y + JumpHeight){
                 _rb.linearVelocity += new Vector2(0, riseSpeed) * Time.deltaTime;

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using DamageManagement;
 using Events.Channels;
 using UnityEngine;
@@ -15,6 +16,7 @@ public class AttackCollider : MonoBehaviour
     public IDamageableEventChannelSO OnAttackIDamageable => onPlayerAttackLanded;
     public GameObjectEventChannelSO OnAttackGameObject => onAttackGameObject;
     private Collider2D _collider;
+    private HashSet<IDamageable> _alreadyAttacked = new HashSet<IDamageable>();
 
     private void Awake()
     {
@@ -39,13 +41,17 @@ public class AttackCollider : MonoBehaviour
     private void SetTrigger(bool value)
     {
         gameObject.SetActive(value);
+        if (!value)
+        {
+            _alreadyAttacked.Clear();
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.transform.IsChildOf(playerTransform)) return;
         IDamageable damageable = other.GetComponent<IDamageable>();
-        if (damageable != null)
+        if (damageable != null && _alreadyAttacked.Add(damageable))
         {
             onPlayerAttackLanded.RaiseEvent(damageable);
             OnAttackGameObject.RaiseEvent(other.gameObject);

@@ -10,7 +10,7 @@ namespace Collisions
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            if (other.CompareTag("Enemy")) return;
+            if (!other.CompareTag("Ground")) return;
             if (other.transform.IsChildOf(playerTransform)) return;
             if (other.transform.position.x > transform.position.x)
             {

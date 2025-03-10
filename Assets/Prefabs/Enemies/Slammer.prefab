@@ -201,7 +201,7 @@ GameObject:
   - component: {fileID: 886488693445997234}
   m_Layer: 3
   m_Name: Platform
-  m_TagString: Enemy
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -536,13 +536,14 @@ MonoBehaviour:
   moveSpeed: 0
   attackSpeed: 0
   attackCooldown: 0
-  attackDuration: 0.15
+  attackDuration: 0.5
   radarCollider: {fileID: 4730245314230649666}
   groundCheckCollider: {fileID: 8115672635625217022}
   enemySprite: {fileID: 8606680281791727342}
   animator: {fileID: 0}
   matFlash: {fileID: 2100000, guid: a90af893002ce404293a82d1ca6471f3, type: 2}
   matOriginal: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  backgroundPulse: {fileID: 0}
   hitSpeed: 100
   hitDrag: 10
   flashTime: 0.3
