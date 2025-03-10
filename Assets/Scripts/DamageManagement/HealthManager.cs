@@ -22,6 +22,11 @@ public class HealthManager : MonoBehaviour, IDamageable
     private void Awake()
     {
         health = maxHealth;
+        Initialize();
+    }
+
+    public void Initialize()
+    {
         if(onDamage == null)
             onDamage = ScriptableObject.CreateInstance<FloatEventChannelSO>();
         if (onHeal == null)
