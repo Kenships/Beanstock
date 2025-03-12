@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Collisions;
+using DamageManagement;
 using Events.Channels;
 using UnityEngine;
 using Util;
@@ -36,6 +37,7 @@ namespace Enemy
         [SerializeField] protected Animator animator;
         [SerializeField] protected Material matFlash;
         [SerializeField] protected Material matOriginal;
+        [SerializeField] private GameObject backgroundPulse;
         protected Color _originalColor;
     
         [Header("___Knockback Config___")]
@@ -59,6 +61,8 @@ namespace Enemy
         
             _rb = gameObject.GetComponent<Rigidbody2D>();
             _healthManager = GetComponent<HealthManager>();
+
+            PulseVisual(false);
         }
 
         protected void Start()
@@ -179,6 +183,14 @@ namespace Enemy
 
             enemySprite.color = _originalColor;
             enemySprite.material = matOriginal;
+        }
+
+        public void PulseVisual(bool value)
+        {
+            if (backgroundPulse)
+            {
+                backgroundPulse.SetActive(value);
+            }
         }
     }
 }

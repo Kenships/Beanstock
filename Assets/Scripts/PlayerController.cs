@@ -63,6 +63,8 @@ public class PlayerController : MonoBehaviour, ICanZipline
     
     [Header("___RADAR DEBUG___")]
     [SerializeField] List<GameObject> enemiesInRadar;
+
+    [SerializeField] private GameObject currentTarget;
     
     
     [Header("___ANIMATION___")]
@@ -140,6 +142,7 @@ public class PlayerController : MonoBehaviour, ICanZipline
         healthManager.OnDie.onEventRaised += OnDie;
         inputReader.Jump.onEventRaised += Jump;
         inputReader.Move.onEventRaised += SetDirection;
+        inputReader.Move.onEventRaised += SelectEnemy;
         inputReader.Attack.onEventRaised += AttackStart;
         inputReader.Shoot.onEventRaised += Shoot;
         _wallRunTimer.OnTimerStart += StartWallRunningParticles;
@@ -162,6 +165,7 @@ public class PlayerController : MonoBehaviour, ICanZipline
         healthManager.OnDie.onEventRaised -= OnDie;
         inputReader.Jump.onEventRaised -= Jump;
         inputReader.Move.onEventRaised -= SetDirection;
+        inputReader.Move.onEventRaised -= SelectEnemy;
         inputReader.Attack.onEventRaised -= AttackStart;
         inputReader.Shoot.onEventRaised -= Shoot;
         _wallRunTimer.OnTimerStart -= StartWallRunningParticles;
@@ -404,10 +408,6 @@ public class PlayerController : MonoBehaviour, ICanZipline
         { 
             _groundCayoteTime.Restart(cayoteTimeMax);
         }
-        else
-        {
-            _groundCayoteTime.ForceEnd();
-        }
     }
 
     public void SetOnWall(int set){
@@ -474,10 +474,10 @@ public class PlayerController : MonoBehaviour, ICanZipline
     private void AttackStart(EmptyEventArgs args){
             
         if(_playerState == State.Moving && _canAttack){
-            if (TryLocateClosestTarget(out GameObject closestTarget))
+            if (currentTarget)
             {
                 onAttackEnable.RaiseEvent(true);
-                Vector3 target = closestTarget.transform.position;
+                Vector3 target = currentTarget.transform.position;
     
                 if(Vector3.Distance(transform.position, target) <= attackRange){
                     //start attack
@@ -557,14 +557,61 @@ public class PlayerController : MonoBehaviour, ICanZipline
     private void AddEnemyToRadar(GameObject enemy)
     {
         enemiesInRadar.Add(enemy);
+        SelectEnemy(Vector2.zero);
     }
 
     private void RemoveEnemyFromRadar(GameObject enemy)
     {
         enemiesInRadar.Remove(enemy);
+        if (enemy == currentTarget)
+        {
+            currentTarget = null;
+        }
+        if (enemy.TryGetComponent(out AbstractEnemy target))
+        {
+            target.PulseVisual(false);
+        }
+        SelectEnemy(Vector2.zero);
     }
-    
-    
+
+    private void SelectEnemy(Vector2 inputDirection)
+    {
+        if (TryLocateDirectionalTarget(inputDirection, out GameObject directionalTarget))
+        {
+            if (directionalTarget.TryGetComponent(out AbstractEnemy target))
+            {
+                if (currentTarget && currentTarget.TryGetComponent(out AbstractEnemy current))
+                {
+                    current.PulseVisual(false);
+                }
+                target.PulseVisual(true);
+            }
+            currentTarget = directionalTarget;
+        }
+    }
+
+    private bool TryLocateDirectionalTarget(Vector2 inputDirection, out GameObject directionalTarget)
+    {
+        directionalTarget = null;
+        if(enemiesInRadar.Count == 0) return false;
+        if(inputDirection == Vector2.zero) return TryLocateClosestTarget(out directionalTarget);
+        directionalTarget = enemiesInRadar[0];
+        float bestDotValue = Vector2.Dot(inputDirection, (directionalTarget.transform.position - transform.position).normalized);
+        foreach (var bogie in enemiesInRadar)
+        {
+            float dotValue = Vector2.Dot(inputDirection, (bogie.transform.position - transform.position).normalized);
+            Debug.Log(bogie.name + " " + dotValue);
+            if (dotValue > bestDotValue)
+            {
+                directionalTarget = bogie;
+                bestDotValue = dotValue;
+            }
+        }
+
+        return true;
+    }
+
+
     private bool TryLocateClosestTarget(out GameObject closestTarget)
     {
         closestTarget = null;
