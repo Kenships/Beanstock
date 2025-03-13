@@ -18,6 +18,7 @@ namespace Enemy
 
         private enum EnemyState { Hidden, Emerging, Emerged, Retreating }
         private EnemyState _currentState = EnemyState.Hidden;
+        private AudioSource _audioManager;
 
         void Start()
         {
@@ -124,6 +125,7 @@ namespace Enemy
 
         private void StartEmerging()
         {
+            
             _currentState = EnemyState.Emerging;
             _ec.enabled = false; // Disable the collider while emerging
         }
