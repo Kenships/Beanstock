@@ -42,6 +42,7 @@ public class PlayerController : MonoBehaviour, ICanZipline
     [SerializeField] private ParticleSystem sliceEffect;
     [SerializeField] private ParticleSystem wallRunEffect;
     [SerializeField] private ParticleSystem jumpEffect;
+    [SerializeField] private ParticleSystem ziplineEffect;
     
     [Header("___TIMER CONFIG___")]
     [SerializeField] private float invincibilityMax;
@@ -197,6 +198,7 @@ public class PlayerController : MonoBehaviour, ICanZipline
                 DashMovement();
                 break;
             case State.Ziplining:
+                playerSprite.eulerAngles = Vector3.zero;
                 break;
         }
         //jittery camera
@@ -642,10 +644,12 @@ public class PlayerController : MonoBehaviour, ICanZipline
     //Remove me Later, Player is only responsible for knowing that it is on a zipline
     public void StartZipline(){
         _playerState = State.Ziplining;
+        ziplineEffect.Play();
     }
 
     public void EndZipline()
     {
+        ziplineEffect.Stop();
         _playerState = State.Moving;
         _rb.linearVelocity = new Vector2(transform.parent.GetComponent<Rigidbody2D>().linearVelocity.x, ziplineBoost);
     }
