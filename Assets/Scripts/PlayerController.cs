@@ -41,6 +41,7 @@ public class PlayerController : MonoBehaviour, ICanZipline
     [SerializeField] private ParticleSystem wallJumpEffect;
     [SerializeField] private ParticleSystem sliceEffect;
     [SerializeField] private ParticleSystem wallRunEffect;
+    [SerializeField] private ParticleSystem jumpEffect;
     
     [Header("___TIMER CONFIG___")]
     [SerializeField] private float invincibilityMax;
@@ -259,7 +260,7 @@ public class PlayerController : MonoBehaviour, ICanZipline
             SlerpRotate(axe, _directionalInput.x * 30, AxeRotationSpeed * Time.deltaTime);
         }
 
-        axeSprite.flipX =  (int) _direction != 1;
+        axeSprite.flipX =  (int) _direction == 1;
     }
 
     private void StartWallRunningParticles()
@@ -293,6 +294,7 @@ public class PlayerController : MonoBehaviour, ICanZipline
     private void Jump(EmptyEventArgs args){
         
         if(_groundCayoteTime.IsRunning){
+            jumpEffect.Play();
             _rb.linearVelocity = new Vector2(_rb.linearVelocityX, jumpSpeed);
             animator.SetTrigger("Jump");
         }
@@ -407,6 +409,7 @@ public class PlayerController : MonoBehaviour, ICanZipline
         if (_onGround)
         { 
             _groundCayoteTime.Restart(cayoteTimeMax);
+            animator.ResetTrigger("Jump");
         }
     }
 
@@ -510,7 +513,7 @@ public class PlayerController : MonoBehaviour, ICanZipline
         //ends dash
         _attackTimer.ForceEnd();
         
-        if(Physics2D.BoxCast(transform.position, new Vector2(1, 6), 0, Vector2.zero, 0, groundLayer)){
+        if(Physics2D.BoxCast(transform.position, new Vector2(1, 8), 0, Vector2.zero, 0, groundLayer)){
             //bounce
             _rb.linearVelocity = new Vector2(_rb.linearVelocityX, 70);
             //Debug.Log("On ground!");

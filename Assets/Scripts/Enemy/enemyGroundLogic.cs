@@ -1,4 +1,6 @@
 using System;
+using DamageManagement;
+using UnityEditor.Callbacks;
 using UnityEngine;
 
 public class enemyGroundLogic : MonoBehaviour
@@ -19,6 +21,7 @@ public class enemyGroundLogic : MonoBehaviour
     [SerializeField] private float _chaseRange;
     [SerializeField] private float _moveRange;
     private Vector3 _originalPosition;
+    [SerializeField] private SpriteRenderer mySprite;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -63,6 +66,13 @@ public class enemyGroundLogic : MonoBehaviour
                 Attack();
                 break;
         }
+
+        if(_rb.linearVelocity.x > 0){
+            mySprite.flipX = false;
+        }
+        else{
+            mySprite.flipX = true;
+        }
     }
 
     void Attack(){
@@ -90,5 +100,14 @@ public class enemyGroundLogic : MonoBehaviour
 
     void Jump(){
         _rb.linearVelocity = new Vector2(_rb.linearVelocityX, _jumpSpeed);
+    }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        /*
+        if(collision.gameObject.tag != "Player"){
+            collision.gameObject.GetComponent<IDamageable>().Damage(1);
+        }
+        */
     }
 }

@@ -44,4 +44,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7bbb72f03d1444a98869e863927fa9f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemy: {fileID: 0}
+  respawnPoof: {fileID: 1894019670585443325, guid: 07a9e959f238345368be991e9687c60a, type: 3}
