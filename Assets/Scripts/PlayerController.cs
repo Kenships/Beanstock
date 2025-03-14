@@ -105,15 +105,20 @@ public class PlayerController : MonoBehaviour, ICanZipline
     private bool _onGround;
     private bool _canAttack;
     private float _wallSide;
-    
     private float _direction;
-
+    private AudioManager _audioManager;
+    
+    /* Walking sound field */
+    private bool playingFootsteps = false;
+    public float footstepSpeed = 0.5f;
+    
     private void Awake()
     {
         
         _attackEffect = attack.GetComponent<ParticleSystem>();
         inputReader.EnablePlayerActions();
         _rb = gameObject.GetComponent<Rigidbody2D>();
+        _audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
         
         /*___TIMER INITIALIZATION___*/
         //ticks separately
@@ -187,6 +192,29 @@ public class PlayerController : MonoBehaviour, ICanZipline
         Ziplining
     }
     
+    private void HandleFootstepSounds()
+    {
+        // Check if the player is on the ground and moving horizontally.
+        if (_onGround && Mathf.Abs(_rb.linearVelocity.x) > 0.1f)
+        {
+            // Start looping if not already playing.
+            if (!playingFootsteps)
+            {
+                playingFootsteps = true;
+                _audioManager.PlayFootsteps();
+            }
+        }
+        else
+        {
+            // Stop the loop if the player stops moving or is in the air.
+            if (playingFootsteps)
+            {
+                _audioManager.StopFootsteps();
+                playingFootsteps = false;
+            }
+        }
+    }
+    
     private void Update()
     {   
         switch(_playerState){
@@ -206,6 +234,7 @@ public class PlayerController : MonoBehaviour, ICanZipline
         //jittery camera
         SetGravity();
         UpdateTimers();
+        HandleFootstepSounds();
         
     }
 
@@ -345,7 +374,6 @@ public class PlayerController : MonoBehaviour, ICanZipline
             animator.SetFloat("Speed", Mathf.Abs(_rb.linearVelocityX));
         if(_directionalInput.x != 0)
             _direction = _directionalInput.x;
-
     }
 
     private void WallInteraction(){
@@ -440,6 +468,7 @@ public class PlayerController : MonoBehaviour, ICanZipline
         Debug.Log("Healed to " + healthRemaining);
     }
     private void OnDamaged(float damage){
+        _audioManager.PlaySFX(_audioManager.playerHit);
         if(damage <= 0 || _invincibility.IsRunning) return;
         hitEffect.Play();
         StartCoroutine(TimeController.FreezeTime(0.01f));
@@ -521,6 +550,7 @@ public class PlayerController : MonoBehaviour, ICanZipline
     
     public void OnAttackLanded(IDamageable damageable)
     {
+        _audioManager.PlaySFX(_audioManager.enemyHit);
         damageable.Damage(playerDamage);
         
         attack.transform.up = playerSprite.up;

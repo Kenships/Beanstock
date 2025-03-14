@@ -21,7 +21,6 @@ namespace Enemy
         [SerializeField] private float _moveRange;
         private Vector3 _originalPosition;
         [SerializeField] private SpriteRenderer mySprite;
-
         // Start is called once before the first execution of Update after the MonoBehaviour is created
         void Start()
         {
