@@ -36,7 +36,8 @@ public class BackgroundPulse : MonoBehaviour
         sr.flipX = parentsr.flipX;
         sr.flipY = parentsr.flipY;
         float scaleFactor = (Mathf.Sin(Time.time * pulseSpeed) + 1) / 2; // Normalized oscillation [0,1]
-        float dynamicScale = Mathf.Lerp(1.0f, scaleMultiplier, scaleFactor);
+        //float dynamicScale = Mathf.Lerp(1.0f, scaleMultiplier, scaleFactor);
+        float dynamicScale = scaleMultiplier;
         transform.localScale = originalScale * dynamicScale;
     }
 }

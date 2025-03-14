@@ -32,11 +32,11 @@ namespace Enemy
 
         IEnumerator DoRespawn(float respawnTime = RespawnTime){
             _respawnObject.SetActive(false);
-            Instantiate(respawnPoof, _respawnObject.transform.position + new Vector3(0, -2.3f, 0), Quaternion.identity);
+            Instantiate(respawnPoof, _respawnObject.transform.position, Quaternion.identity);
             yield return new WaitForSeconds(respawnTime);
             _respawnObject.SetActive(true);
             _respawnObject.transform.position = transform.position;
-            Instantiate(respawnPoof, transform.position + new Vector3(0, -2.3f, 0), Quaternion.identity);
+            Instantiate(respawnPoof, transform.position, Quaternion.identity);
             ObjectPoolManager.RecycleObject(gameObject);
         }
     }

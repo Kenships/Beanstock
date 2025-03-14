@@ -104,10 +104,10 @@ namespace Enemy
         void OnCollisionEnter2D(Collision2D collision)
         {
             /*
-        if(collision.gameObject.tag != "Player"){
-            collision.gameObject.GetComponent<IDamageable>().Damage(1);
-        }
-        */
+            if(collision.gameObject.tag != "Player"){
+                collision.gameObject.GetComponent<IDamageable>().Damage(1);
+            }
+            */
         }
     }
 }
