@@ -9,6 +9,7 @@ TagManager:
   - Enemy Attack
   - Ground
   - Zipline
+  - Audio
   layers:
   - Default
   - TransparentFX

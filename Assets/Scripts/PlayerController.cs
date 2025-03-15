@@ -504,10 +504,10 @@ public class PlayerController : MonoBehaviour, ICanZipline
         AttackStart(new EmptyEventArgs());
     }
     private void AttackStart(EmptyEventArgs args){
-            
         if(_playerState == State.Moving && _canAttack){
             if (currentTarget)
             {
+                _audioManager.PlaySFX(_audioManager.playerDash);
                 onAttackEnable.RaiseEvent(true);
                 Vector3 target = currentTarget.transform.position;
     
