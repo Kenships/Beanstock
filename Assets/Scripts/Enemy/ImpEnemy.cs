@@ -15,6 +15,7 @@ namespace Enemy
         [SerializeField] private int moveRange;
         [SerializeField] private float climbSpeed;
         [SerializeField] private float jumpSpeed;
+        //[SerializeField] private Animator animator;
         [Header("___Attack Radar Debug___")]
         [SerializeField] private State enemyState;
         [SerializeField] private RadarCollider attackRadar;
@@ -30,6 +31,9 @@ namespace Enemy
         
         private new void Start()
         {
+            for(int i = 0; i < patrolPosition.Length; i++){
+                patrolPosition[i] = new Vector3(patrolPosition[i].x, transform.position.y);
+            }
             base.Start();
             AttackCooldownTimer.Cancel();
             attackRadar.SetRadius(attackRange);
@@ -131,6 +135,9 @@ namespace Enemy
             if (inAttackRangeBogey.TryGetComponent(out IDamageable damageable))
             {
                 damageable.Damage(attackDamage);
+                if(animator != null){
+                    animator.SetTrigger("Attack");
+                }
             }
         }
 

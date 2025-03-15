@@ -42,6 +42,9 @@ public class PlayerController : MonoBehaviour, ICanZipline
     [SerializeField] private ParticleSystem sliceEffect;
     [SerializeField] private ParticleSystem wallRunEffect;
     [SerializeField] private ParticleSystem jumpEffect;
+    [SerializeField] private ParticleSystem ziplineEffect;
+    [SerializeField] private ParticleSystem deathEffect;
+    [SerializeField] private Animation transition;
     
     [Header("___TIMER CONFIG___")]
     [SerializeField] private float invincibilityMax;
@@ -225,6 +228,7 @@ public class PlayerController : MonoBehaviour, ICanZipline
                 DashMovement();
                 break;
             case State.Ziplining:
+                playerSprite.eulerAngles = Vector3.zero;
                 break;
         }
         //jittery camera
@@ -473,18 +477,31 @@ public class PlayerController : MonoBehaviour, ICanZipline
 
     private void OnDie(GameObject gameObject)
     {
-        if (!_checkPoint) _checkPoint = defaultCheckPoint;
-        RespawnHolder myRespawn = ObjectPoolManager.SpawnObject(respawnHolder, _checkPoint.transform.position, Quaternion.identity)
-            .GetComponent<RespawnHolder>();
-        myRespawn.Respawn(gameObject, 0.2f);
-        
-        healthManager.Reset();
-        
-        enemiesInRadar.Clear();
+        //effects
+        deathEffect.Play();
+        //StartCoroutine(TimeController.FreezeTime(0.02f));
+        StartCoroutine(DieTransition());
+
         //if(_checkPoint == null){
         //    _checkPoint = defaultCheckPoint;
         //}
         //transform.position = _checkPoint.transform.position;
+    }
+
+    private IEnumerator DieTransition(){
+        _playerState = State.Ziplining;
+        yield return new WaitForSeconds(0.6f);
+        _playerState = State.Moving;
+        transition.Play();
+
+                if (!_checkPoint) _checkPoint = defaultCheckPoint;
+        RespawnHolder myRespawn = ObjectPoolManager.SpawnObject(respawnHolder, _checkPoint.transform.position, Quaternion.identity)
+            .GetComponent<RespawnHolder>();
+        myRespawn.Respawn(gameObject, 0f);
+        
+        healthManager.Reset();
+        
+        enemiesInRadar.Clear();
     }
     /*-------------------------------*/
     /*__________DASH ATTACK__________*/
@@ -672,10 +689,14 @@ public class PlayerController : MonoBehaviour, ICanZipline
     //Remove me Later, Player is only responsible for knowing that it is on a zipline
     public void StartZipline(){
         _playerState = State.Ziplining;
+        axe.localScale = new Vector3(0, 0, 0);
+        ziplineEffect.Play();
     }
 
     public void EndZipline()
     {
+        axe.localScale = new Vector3(1, 1, 0);
+        ziplineEffect.Stop();
         _playerState = State.Moving;
         _rb.linearVelocity = new Vector2(transform.parent.GetComponent<Rigidbody2D>().linearVelocity.x, ziplineBoost);
     }
@@ -688,5 +709,10 @@ public class PlayerController : MonoBehaviour, ICanZipline
         if(!_checkPoint || spawn.CheckPointIndex > _checkPoint.CheckPointIndex){
             _checkPoint = spawn;
         }
+    }
+
+    void OnParticleCollision(GameObject other)
+    {
+        healthManager.Damage(1);
     }
 }
