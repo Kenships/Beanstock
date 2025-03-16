@@ -144,6 +144,11 @@ public class PlayerController : MonoBehaviour, ICanZipline
         enemiesInRadar = new List<GameObject>();
     }
 
+    private void Start()
+    {
+        healthManager.Reset();
+    }
+
     private void OnEnable(){
         healthManager.Initialize();
         healthManager.OnDamage.onEventRaised += OnDamaged;
@@ -650,7 +655,6 @@ public class PlayerController : MonoBehaviour, ICanZipline
         foreach (var bogie in enemiesInRadar)
         {
             float dotValue = Vector2.Dot(inputDirection, (bogie.transform.position - transform.position).normalized);
-            Debug.Log(bogie.name + " " + dotValue);
             if (dotValue > bestDotValue)
             {
                 directionalTarget = bogie;

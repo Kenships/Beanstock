@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Collisions;
 using DamageManagement;
@@ -39,6 +40,12 @@ namespace Enemy
             attackRadar.SetRadius(attackRange);
             attackRadar.RadarChannel.onEventRaised += ProcessBogieInAttackRange;
             AttackDurationTimer.OnTimerEnd += AttemptAttack;
+        }
+
+        private void OnDisable()
+        {
+            inAttackRangeBogies.Clear();
+            inRangeBogies.Clear();
         }
 
         private void ProcessBogieInAttackRange(RadarInfo radarInfo)
