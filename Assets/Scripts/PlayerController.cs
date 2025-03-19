@@ -468,7 +468,7 @@ public class PlayerController : MonoBehaviour, ICanZipline
         Debug.Log("Healed to " + healthRemaining);
     }
     private void OnDamaged(float damage){
-        _audioManager.PlaySFX(_audioManager.playerHit);
+        _audioManager.playPlayerHitSound();
         if(damage <= 0 || _invincibility.IsRunning) return;
         hitEffect.Play();
         StartCoroutine(TimeController.FreezeTime(0.01f));
@@ -550,7 +550,7 @@ public class PlayerController : MonoBehaviour, ICanZipline
     
     public void OnAttackLanded(IDamageable damageable)
     {
-        _audioManager.PlaySFX(_audioManager.enemyHit);
+        _audioManager.playEnemyHitSound();
         damageable.Damage(playerDamage);
         
         attack.transform.up = playerSprite.up;

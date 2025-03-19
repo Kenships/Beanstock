@@ -8,6 +8,8 @@ public class AudioManager : MonoBehaviour
     [Header("Audio Sources")]
     [SerializeField] AudioSource MusicSource;
     [SerializeField] AudioSource SFXSource;
+    private AudioSource _damageSource; // Plays when enemy gets hit
+    private AudioSource _enemyDamageSource;
 
     [Header("SFX Clips")]
     public AudioClip trapSound;
@@ -25,6 +27,26 @@ public class AudioManager : MonoBehaviour
     {
         MusicSource.clip = calmBackground;
         MusicSource.Play();
+    }
+
+    public void playEnemyHitSound()
+    {
+        // If it is already playing return
+        if (_damageSource.clip == enemyHit && _damageSource.isPlaying)
+            return;
+
+        _damageSource.clip = enemyHit;
+        _damageSource.Play();
+    }
+    
+    public void playPlayerHitSound()
+    {
+        // If it is already playing return
+        if (_damageSource.clip == playerHit && _damageSource.isPlaying)
+            return;
+
+        _damageSource.clip = playerHit;
+        _damageSource.Play();
     }
 
     public void PlaySFX(AudioClip clip)
