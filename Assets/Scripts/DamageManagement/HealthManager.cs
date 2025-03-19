@@ -36,6 +36,8 @@ namespace DamageManagement
                 onDie = ScriptableObject.CreateInstance<GameObjectEventChannelSO>();
             if (onRespawn == null)
                 onRespawn = ScriptableObject.CreateInstance<GameObjectEventChannelSO>();
+
+            health = maxHealth;
         }
         public void Die()
         {

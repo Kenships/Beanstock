@@ -719,6 +719,7 @@ public class PlayerController : MonoBehaviour, ICanZipline
 
     void OnParticleCollision(GameObject other)
     {
-        healthManager.Damage(1);
+        if(!_invincibility.IsRunning)
+            healthManager.Damage(1);
     }
 }
