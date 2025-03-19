@@ -15,15 +15,17 @@ public class AudioManager : MonoBehaviour
     public AudioClip enemyHit; // When enemy gets hit
     public AudioClip playerHit; // When the player gets hit
     public AudioClip playerDash;
+    public AudioClip playerJump;
     
     [Header("Music Clips")]
     public AudioClip calmBackground;
+    public AudioClip runningTheme;
     public AudioClip bossTheme;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        MusicSource.clip = calmBackground;
+        MusicSource.clip = runningTheme;
         MusicSource.Play();
     }
 

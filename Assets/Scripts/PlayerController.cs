@@ -332,7 +332,9 @@ public class PlayerController : MonoBehaviour, ICanZipline
     private void Jump(EmptyEventArgs args){
         
         if(_groundCayoteTime.IsRunning){
+            _audioManager.PlaySFX(_audioManager.playerJump);
             jumpEffect.Play();
+            
             _rb.linearVelocity = new Vector2(_rb.linearVelocityX, jumpSpeed);
             animator.SetTrigger("Jump");
         }
