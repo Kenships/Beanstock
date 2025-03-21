@@ -160,7 +160,11 @@ namespace Enemy
         }
 
         void Jump(){
-            _rb.linearVelocity = new Vector2(_rb.linearVelocityX, jumpSpeed);
+            //_rb.linearVelocity = new Vector2(_rb.linearVelocityX, jumpSpeed);
+        }
+
+        void die(){
+            
         }
     }
 }

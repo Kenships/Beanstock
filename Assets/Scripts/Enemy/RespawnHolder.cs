@@ -5,6 +5,7 @@ namespace Enemy
 {
     public class RespawnHolder : MonoBehaviour
     {
+        public bool dontRespawn;
         [SerializeField] private GameObject respawnPoof;
         public GameObject RespawnObject
         {
@@ -31,6 +32,7 @@ namespace Enemy
         }
 
         IEnumerator DoRespawn(float respawnTime = RespawnTime){
+            if(dontRespawn) Destroy(gameObject);
             _respawnObject.SetActive(false);
             Instantiate(respawnPoof, _respawnObject.transform.position, Quaternion.identity);
             yield return new WaitForSeconds(respawnTime);

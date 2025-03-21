@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using DamageManagement;
 using UnityEngine;
 
 public class BossMovement : MonoBehaviour
@@ -11,7 +12,7 @@ public class BossMovement : MonoBehaviour
     private float _attackCounter;
     [SerializeField] private BossArm leftArm;
     [SerializeField] private BossArm rightArm;
-    [SerializeField] private EnemyHealth head;
+    [SerializeField] private HealthManager head;
     private float _health;
     private int _roarCounter;
     [SerializeField] private GameObject roarBlast;
@@ -21,7 +22,7 @@ public class BossMovement : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        _health = head.getHealth();
+        _health = head.GetHealth();
         _rb = gameObject.GetComponent<Rigidbody2D>();
         StartCoroutine(MovementPattern(1));
     }
@@ -43,6 +44,7 @@ public class BossMovement : MonoBehaviour
                 //clap with both arms
                 leftArm.startClap();
                 rightArm.startClap();
+                
             }
             else{
                 //arm slams
@@ -56,12 +58,12 @@ public class BossMovement : MonoBehaviour
         }
 
         //getting hit
-        if(_health != head.getHealth()){
+        if(_health != head.GetHealth()){
             if(_health == 1){
                 Instantiate(deathEffect, transform.position, Quaternion.identity);
                 Destroy(gameObject);
             }
-            _health = head.getHealth();
+            _health = head.GetHealth();
             _roarCounter++;
 
             //do the roar

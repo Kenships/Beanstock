@@ -4,13 +4,20 @@ public class BossArm : MonoBehaviour
 {
     private Vector3 originalPosition;
     public GameObject attackHitBox;
+    private BoxCollider2D hitBox;
     private float _slam;
     private float _clap;
     private float _attackCounter;
+    [SerializeField] private SpriteRenderer mySprite;
+    private Material normalMaterial;
+    [SerializeField] private Material flash;
+    [SerializeField] private AudioSource smash;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        normalMaterial = mySprite.material;
+        hitBox = gameObject.GetComponent<BoxCollider2D>();
         originalPosition = transform.localPosition;
     }
 
@@ -22,14 +29,16 @@ public class BossArm : MonoBehaviour
 
         if(_slam > 0){
             //ground slam attack
-            if(_slam > 0.3f){
+            if(_slam > 0.2f){
                 //windup
                 LerpMove(new Vector3(0, 5), 5);
             }
             else{
                 //actual attack
-                restartHitBox(0.3f);
+
+                restartHitBox(0.4f);
                 LerpMove(new Vector3(0, -7), 15);
+                CameraScript.Shake(0.3f);
             }
         }
         else if(_clap > 0){
@@ -42,6 +51,7 @@ public class BossArm : MonoBehaviour
                 //actual attack
                 restartHitBox(0.3f);
                 LerpMove(new Vector3(armSide() * -5.5f, 0), 13);
+                CameraScript.Shake(0.3f);
             }
         }
         else{
@@ -51,9 +61,18 @@ public class BossArm : MonoBehaviour
         _attackCounter -= Time.deltaTime;
 
         if(_attackCounter > 0 && !attackHitBox.activeSelf)
+        {
+            hitBox.enabled = false;
             attackHitBox.SetActive(true);
+            mySprite.material = flash;
+            smash.Play();
+        }
         else if(_attackCounter < 0 && attackHitBox.activeSelf)
+        {
+            mySprite.material = normalMaterial;
+            hitBox.enabled = true;
             attackHitBox.SetActive(false);
+        }
 
         
     }

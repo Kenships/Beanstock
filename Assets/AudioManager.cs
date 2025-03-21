@@ -5,70 +5,68 @@ using UnityEngine.Assertions;
 
 public class AudioManager : MonoBehaviour
 {
+    [SerializeField] private AudioSource audioSource;
     [Header("Audio Sources")]
     [SerializeField] AudioSource MusicSource;
-    [SerializeField] AudioSource SFXSource;
-    [SerializeField] private AudioSource _enemyHitSource; // Plays when enemy gets hit
-    [SerializeField] private AudioSource _playerHitSource;
+    //[SerializeField] AudioSource SFXSource;
 
     [Header("SFX Clips")]
     public AudioClip trapSound;
-    public AudioClip[] walkSounds;
+    public AudioSource walkSounds;
     public AudioClip enemyHit; // When enemy gets hit
     public AudioClip playerHit; // When the player gets hit
     public AudioClip playerDash;
+    public AudioClip playerJump;
+    public AudioSource zipSound;
+    public AudioClip wallJump;
+    public AudioClip bossSmash;
     
     [Header("Music Clips")]
     public AudioClip calmBackground;
     public AudioClip bossTheme;
+    public AudioClip runningTheme;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        MusicSource.clip = calmBackground;
-        MusicSource.Play();
+        setMusic(runningTheme);
     }
 
-    public void playEnemyHitSound()
-    {
-        _enemyHitSource.clip = enemyHit;
-        _enemyHitSource.Play();
+    public void setMusic(AudioClip music){
+        MusicSource.clip = music;
+        MusicSource.Play();
     }
     
+    /*
     public void playPlayerHitSound()
     {
         _playerHitSource.clip = playerHit;
         _playerHitSource.Play();
     }
+    */
 
     public void PlaySFX(AudioClip clip)
     {
-        SFXSource.PlayOneShot(clip);
+        AudioSource audio = Instantiate(audioSource, transform.position, Quaternion.identity).GetComponent<AudioSource>();
+        audio.clip = clip;
+        audio.Play();
     }
 
     public void PlayFootsteps()
     {
-        // Assert the length is not 0 to avoid out of bound errors
-        Assert.IsTrue(walkSounds.Length > 0);
-        
-        // Only start footsteps if they're not already playing.
-        if (walkSounds.Contains(SFXSource.clip) && SFXSource.isPlaying)
-            return;
-        
-        SFXSource.clip = walkSounds[Random.Range(0, walkSounds.Length)];
-        SFXSource.loop = true;
-        SFXSource.Play();
+        walkSounds.volume = 0.4f;
     }
 
     public void StopFootsteps()
     {
-        // Only stop if the currently playing clip is the footsteps.
-        if (walkSounds.Contains(SFXSource.clip) && SFXSource.isPlaying)
-        {
-            SFXSource.Stop();
-            // Optionally reset the clip and looping state so other SFX won't be affected.
-            SFXSource.clip = null;
-            SFXSource.loop = false;
-        }
+        walkSounds.volume = 0;
+    }
+
+    public void PlayZip(){
+        zipSound.volume = 0.6f;
+    }
+
+    public void StopZip(){
+        zipSound.volume = 0;
     }
 }

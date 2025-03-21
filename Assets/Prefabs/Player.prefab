@@ -10052,7 +10052,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 0.8113208, g: 0.8113208, b: 0.8113208, a: 1}
-      maxColor: {r: 0.2509804, g: 0.36078432, b: 0.24705882, a: 1}
+      maxColor: {r: 0.015686275, g: 0.14901961, b: 0, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -19890,9 +19890,9 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: cca78dc2efb8b4f6c9f874edbfb46797, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 4ec0d9e2547ed4887ba6e03634aee696, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_FlipX: 0
+  m_FlipX: 1
   m_FlipY: 0
   m_DrawMode: 0
   m_Size: {x: 20.48, y: 20.48}
@@ -30112,7 +30112,7 @@ Transform:
   m_GameObject: {fileID: 6115965994437965920}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 3.26, y: -1.04, z: 0}
+  m_LocalPosition: {x: 0.9, y: -2.22, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -30309,7 +30309,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 0.8113208, g: 0.8113208, b: 0.8113208, a: 1}
-      maxColor: {r: 0.5700397, g: 0.7169812, b: 0.5647918, a: 1}
+      maxColor: {r: 1, g: 1, b: 1, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -30373,7 +30373,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 2.5
+      scalar: 1
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -30531,7 +30531,7 @@ ParticleSystem:
         m_RotationOrder: 4
     startRotationX:
       serializedVersion: 2
-      minMaxState: 3
+      minMaxState: 0
       scalar: 0
       minScalar: 0
       maxCurve:
@@ -30584,7 +30584,7 @@ ParticleSystem:
         m_RotationOrder: 4
     startRotationY:
       serializedVersion: 2
-      minMaxState: 3
+      minMaxState: 0
       scalar: 0
       minScalar: 0
       maxCurve:
@@ -30637,8 +30637,8 @@ ParticleSystem:
         m_RotationOrder: 4
     startRotation:
       serializedVersion: 2
-      minMaxState: 3
-      scalar: 6.283185
+      minMaxState: 0
+      scalar: 4.712389
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -30956,7 +30956,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 10
+      scalar: 30
       minScalar: 10
       maxCurve:
         serializedVersion: 2
@@ -31120,7 +31120,7 @@ ParticleSystem:
       repeatInterval: 0.01
       probability: 1
   SizeModule:
-    enabled: 1
+    enabled: 0
     curve:
       serializedVersion: 2
       minMaxState: 1
@@ -31649,7 +31649,7 @@ ParticleSystem:
     uvChannelMask: -1
     rowMode: 1
     sprites:
-    - sprite: {fileID: 21300000, guid: a915e1cd1f6a542dd9149b9ef6a973ee, type: 3}
+    - sprite: {fileID: -3319089220819414304, guid: aa5636aa7189b42d098e7c90f0312594, type: 3}
     flipU: 0
     flipV: 0
   VelocityModule:
@@ -45003,7 +45003,7 @@ MonoBehaviour:
   attackLength: 0.17
   attackRange: 12
   hitEffect: {fileID: 491630964808884484}
-  wallJumpEffect: {fileID: 0}
+  wallJumpEffect: {fileID: 5161735658860617630}
   sliceEffect: {fileID: 6697969255499515219}
   wallRunEffect: {fileID: 255423434497247506}
   jumpEffect: {fileID: 5161735658860617630}
@@ -45032,6 +45032,7 @@ MonoBehaviour:
   defaultCheckPoint: {fileID: 0}
   respawnHolder: {fileID: 3393184669705677458, guid: dead185e500244931bd6e18ae38dc088, type: 3}
   _checkPoint: {fileID: 0}
+  footstepSpeed: 0.5
 --- !u!61 &2449040770975972606
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -45076,7 +45077,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1, y: 1.2}
+  m_Size: {x: 1.4, y: 1.2}
   m_EdgeRadius: 0
 --- !u!114 &1412064604733299009
 MonoBehaviour:

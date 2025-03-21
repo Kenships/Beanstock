@@ -195,24 +195,10 @@ public class PlayerController : MonoBehaviour, ICanZipline
     private void HandleFootstepSounds()
     {
         // Check if the player is on the ground and moving horizontally.
-        if (_onGround && Mathf.Abs(_rb.linearVelocity.x) > 0.1f)
-        {
-            // Start looping if not already playing.
-            if (!playingFootsteps)
-            {
-                playingFootsteps = true;
-                _audioManager.PlayFootsteps();
-            }
-        }
+        if (_onGround && Mathf.Abs(_rb.linearVelocity.x) > 5f || _wallRunTimer.IsRunning)
+            _audioManager.PlayFootsteps();
         else
-        {
-            // Stop the loop if the player stops moving or is in the air.
-            if (playingFootsteps)
-            {
-                _audioManager.StopFootsteps();
-                playingFootsteps = false;
-            }
-        }
+            _audioManager.StopFootsteps();
     }
     
     private void Update()
@@ -235,7 +221,6 @@ public class PlayerController : MonoBehaviour, ICanZipline
         SetGravity();
         UpdateTimers();
         HandleFootstepSounds();
-        
     }
 
     private void UpdateTimers()
@@ -327,6 +312,7 @@ public class PlayerController : MonoBehaviour, ICanZipline
     private void Jump(EmptyEventArgs args){
         
         if(_groundCayoteTime.IsRunning){
+            _audioManager.PlaySFX(_audioManager.playerJump);
             jumpEffect.Play();
             _rb.linearVelocity = new Vector2(_rb.linearVelocityX, jumpSpeed);
             animator.SetTrigger("Jump");
@@ -389,6 +375,7 @@ public class PlayerController : MonoBehaviour, ICanZipline
             }
             else if(Mathf.Approximately(_directionalInput.x, -_wallSide) && Mathf.Approximately(_directionalInput.y, 1)){
                 //wall jump
+                _audioManager.PlaySFX(_audioManager.wallJump);
                 wallJumpEffect.Play();
                 _wallCayoteTime.ForceEnd();
                 _rb.linearVelocity = new Vector2(_directionalInput.x * wallJumpSpeed.x, wallJumpSpeed.y);
@@ -468,7 +455,8 @@ public class PlayerController : MonoBehaviour, ICanZipline
         Debug.Log("Healed to " + healthRemaining);
     }
     private void OnDamaged(float damage){
-        _audioManager.playPlayerHitSound();
+        CameraScript.Shake(0.3f);
+        _audioManager.PlaySFX(_audioManager.playerHit);
         if(damage <= 0 || _invincibility.IsRunning) return;
         hitEffect.Play();
         StartCoroutine(TimeController.FreezeTime(0.01f));
@@ -550,7 +538,7 @@ public class PlayerController : MonoBehaviour, ICanZipline
     
     public void OnAttackLanded(IDamageable damageable)
     {
-        _audioManager.playEnemyHitSound();
+        _audioManager.PlaySFX(_audioManager.enemyHit);
         damageable.Damage(playerDamage);
         
         attack.transform.up = playerSprite.up;
@@ -583,6 +571,9 @@ public class PlayerController : MonoBehaviour, ICanZipline
         StartCoroutine(TimeController.FreezeTime(time));
         yield return null;
         _rb.linearVelocity = playerSprite.up * dashCompleteSpeed;
+        gameObject.layer = 9;
+        yield return new WaitForSeconds(0.3f);
+        gameObject.layer = 0;
     }
     
     /*-------------------------------*/
@@ -691,10 +682,12 @@ public class PlayerController : MonoBehaviour, ICanZipline
         _playerState = State.Ziplining;
         axe.localScale = new Vector3(0, 0, 0);
         ziplineEffect.Play();
+        _audioManager.PlayZip();
     }
 
     public void EndZipline()
     {
+        _audioManager.StopZip();
         axe.localScale = new Vector3(1, 1, 0);
         ziplineEffect.Stop();
         _playerState = State.Moving;
@@ -713,6 +706,13 @@ public class PlayerController : MonoBehaviour, ICanZipline
 
     void OnParticleCollision(GameObject other)
     {
-        healthManager.Damage(1);
+        if(!_invincibility.IsRunning)
+            healthManager.Damage(1);
+    }
+
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(!_invincibility.IsRunning && collision.gameObject.tag == "Enemy Attack")
+            healthManager.Damage(1);
     }
 }
