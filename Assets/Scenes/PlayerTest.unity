@@ -13841,10 +13841,6 @@ PrefabInstance:
       propertyPath: whoosh
       value: 
       objectReference: {fileID: 8300000, guid: 6472ce80138bc430dbd58b6c3bab840c, type: 3}
-    - target: {fileID: 5956838566642608982, guid: 909c60bbfb99d4ddfbc14e2741aaf90f, type: 3}
-      propertyPath: bossSmash
-      value: 
-      objectReference: {fileID: 8300000, guid: db1732c15711b464cae9d9b93ba583e9, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

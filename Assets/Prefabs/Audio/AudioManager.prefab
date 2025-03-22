@@ -47,6 +47,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2c90dacafe9f4128b3a144f3ad17fa1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerPosition: {fileID: 0}
   audioSource: {fileID: 4935128203715399024, guid: 35e3570067ca14e70ab82726924aeeef, type: 3}
   MusicSource: {fileID: 5931435806955747675}
   trapSound: {fileID: 8300000, guid: aa0c83fa2daf14bd8b3159d6e798f638, type: 3}
@@ -58,6 +59,7 @@ MonoBehaviour:
   zipSound: {fileID: 9142320287274609974}
   wallJump: {fileID: 8300000, guid: 9e8f0ee1934104c1a97c0e3232e66b51, type: 3}
   bossSmash: {fileID: 8300000, guid: db1732c15711b464cae9d9b93ba583e9, type: 3}
+  whoosh: {fileID: 8300000, guid: 6472ce80138bc430dbd58b6c3bab840c, type: 3}
   calmBackground: {fileID: 8300000, guid: 639c3882b255646f4827bd3b38d2cb67, type: 3}
   bossTheme: {fileID: 8300000, guid: c0abf2fef722f4ce59732a0ea1ba5b3a, type: 3}
   runningTheme: {fileID: 8300000, guid: b97c69b8c08fc4cf48636b01856d21ab, type: 3}
