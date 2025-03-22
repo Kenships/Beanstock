@@ -383,7 +383,7 @@ public class PlayerController : MonoBehaviour, ICanZipline
             else if (Mathf.Approximately(_directionalInput.x, _wallSide) && _rb.linearVelocityY < 0)
             {
                 //sliding down wall
-                _rb.linearVelocity *= new Vector2(1, 1 - Time.deltaTime * wallSlideDrag);
+                //_rb.linearVelocity *= new Vector2(1, 1 - Time.deltaTime * wallSlideDrag);
             }
         }
             
@@ -641,7 +641,7 @@ public class PlayerController : MonoBehaviour, ICanZipline
         foreach (var bogie in enemiesInRadar)
         {
             float dotValue = Vector2.Dot(inputDirection, (bogie.transform.position - transform.position).normalized);
-            Debug.Log(bogie.name + " " + dotValue);
+//            Debug.Log(bogie.name + " " + dotValue);
             if (dotValue > bestDotValue)
             {
                 directionalTarget = bogie;

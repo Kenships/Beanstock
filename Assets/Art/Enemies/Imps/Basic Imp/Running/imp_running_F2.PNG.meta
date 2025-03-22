@@ -1,10 +1,13 @@
 fileFormatVersion: 2
-guid: 8aa94fdfff2ed408abb1a58c093a416c
+guid: 6182732e69420462c8f7d39b84949b04
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -8062944837854041612
-    second: Boss left leg_0
+      213: 6293365244201189370
+    second: imp_running_F2_0
+  - first:
+      213: 9016976839651173776
+    second: imp_running_F2_1
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +116,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Boss left leg_0
+      name: imp_running_F2_0
       rect:
         serializedVersion: 2
-        x: 713
-        y: 292
-        width: 292
-        height: 506
+        x: 739
+        y: 443
+        width: 1544
+        height: 2076
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +131,30 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 4f9e328a36aaa1090800000000000000
-      internalID: -8062944837854041612
+      spriteID: affb66e8856865750800000000000000
+      internalID: 6293365244201189370
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: imp_running_F2_1
+      rect:
+        serializedVersion: 2
+        x: 2352
+        y: 1725
+        width: 42
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 095255369acb22d70800000000000000
+      internalID: 9016976839651173776
       vertices: []
       indices: 
       edges: []

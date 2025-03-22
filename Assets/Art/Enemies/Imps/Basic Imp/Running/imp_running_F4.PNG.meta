@@ -1,16 +1,13 @@
 fileFormatVersion: 2
-guid: 1a603eecc4c744a2fbe1ac2aadbc956e
+guid: 5b970fa8c709649d5b9849eda21fb16b
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 2156177983303869529
-    second: Boss left arm_0
+      213: -945072060728877978
+    second: imp_running_F4_0
   - first:
-      213: 3624842893244938218
-    second: Boss left arm_1
-  - first:
-      213: 7085838106813007718
-    second: Boss left arm_2
+      213: 4676306338186954059
+    second: imp_running_F4_1
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -52,7 +49,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -119,13 +116,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Boss left arm_0
+      name: imp_running_F4_0
       rect:
         serializedVersion: 2
-        x: 211
-        y: 649
-        width: 236
-        height: 229
+        x: 679
+        y: 411
+        width: 1604
+        height: 2092
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -134,20 +131,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 954685fa3784ced10800000000000000
-      internalID: 2156177983303869529
+      spriteID: 66cdb1dc7fd62e2f0800000000000000
+      internalID: -945072060728877978
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Boss left arm_1
+      name: imp_running_F4_1
       rect:
         serializedVersion: 2
-        x: 284
-        y: 838
-        width: 411
-        height: 498
+        x: 2352
+        y: 1715
+        width: 42
+        height: 26
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -156,30 +153,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: ae7b67af7670e4230800000000000000
-      internalID: 3624842893244938218
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Boss left arm_2
-      rect:
-        serializedVersion: 2
-        x: 456
-        y: 713
-        width: 121
-        height: 108
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 667048c3734f55260800000000000000
-      internalID: 7085838106813007718
+      spriteID: b458a84a6d395e040800000000000000
+      internalID: 4676306338186954059
       vertices: []
       indices: 
       edges: []
@@ -188,7 +163,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -197,10 +172,7 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable:
-      Boss left arm_0: 2156177983303869529
-      Boss left arm_1: 3624842893244938218
-      Boss left arm_2: 7085838106813007718
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

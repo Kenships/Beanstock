@@ -1,10 +1,13 @@
 fileFormatVersion: 2
-guid: 4d1b5b461a36e472697a6915d628583d
+guid: ec73ecd6696af42f1b756193b7f4ad56
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 456947541424431273
-    second: Boss right leg_0
+      213: 7453565889926268875
+    second: imp_running_F3_0
+  - first:
+      213: -8660485229295766009
+    second: imp_running_F3_1
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +116,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Boss right leg_0
+      name: imp_running_F3_0
       rect:
         serializedVersion: 2
-        x: 1050
-        y: 289
-        width: 292
-        height: 506
+        x: 920
+        y: 349
+        width: 1363
+        height: 2072
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +131,30 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 9a0679f2e57675600800000000000000
-      internalID: 456947541424431273
+      spriteID: bc7060bafa2607760800000000000000
+      internalID: 7453565889926268875
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: imp_running_F3_1
+      rect:
+        serializedVersion: 2
+        x: 2352
+        y: 1623
+        width: 42
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 706fe45b196cfc780800000000000000
+      internalID: -8660485229295766009
       vertices: []
       indices: 
       edges: []

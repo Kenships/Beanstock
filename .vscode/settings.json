@@ -56,5 +56,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "Beanstock - new.sln"
+    "dotnet.defaultSolution": "Beanstock final.sln"
 }

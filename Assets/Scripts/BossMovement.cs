@@ -20,7 +20,7 @@ public class BossMovement : MonoBehaviour
     [SerializeField] private GameObject deathEffect;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    void OnEnable()
     {
         _health = head.GetHealth();
         _rb = gameObject.GetComponent<Rigidbody2D>();
@@ -80,6 +80,7 @@ public class BossMovement : MonoBehaviour
     }
 
     IEnumerator MovementPattern(int currentDirection){
+        Debug.Log(currentDirection);
         _moveDirection = currentDirection;
         yield return new WaitForSeconds(3);
         _moveDirection = 0;

@@ -5,6 +5,7 @@ using UnityEngine.Assertions;
 
 public class AudioManager : MonoBehaviour
 {
+    [SerializeField] private Transform playerPosition;
     [SerializeField] private AudioSource audioSource;
     [Header("Audio Sources")]
     [SerializeField] AudioSource MusicSource;
@@ -20,6 +21,7 @@ public class AudioManager : MonoBehaviour
     public AudioSource zipSound;
     public AudioClip wallJump;
     public AudioClip bossSmash;
+    public AudioClip whoosh;
     
     [Header("Music Clips")]
     public AudioClip calmBackground;
@@ -29,6 +31,7 @@ public class AudioManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        playerPosition = GameObject.FindGameObjectWithTag("Player").transform;
         setMusic(runningTheme);
     }
 
@@ -50,6 +53,12 @@ public class AudioManager : MonoBehaviour
         AudioSource audio = Instantiate(audioSource, transform.position, Quaternion.identity).GetComponent<AudioSource>();
         audio.clip = clip;
         audio.Play();
+    }
+
+    public void PlaySFX(AudioClip clip, Vector3 position){
+        if(Vector3.Distance(position, playerPosition.position) < 30){
+            PlaySFX(clip);
+        }
     }
 
     public void PlayFootsteps()

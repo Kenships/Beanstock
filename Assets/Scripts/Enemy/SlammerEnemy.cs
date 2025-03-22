@@ -19,9 +19,12 @@ public class SlammerEnemy : AbstractEnemy
     [SerializeField] private AttackCollider attackCollider;
     public GameObject attack;
     private bool _rising;
+    [SerializeField] private Animation jumpAnimation;
+    private AudioManager _audioManager;
 
     private new void Awake()
     {
+        _audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
         base.Awake();
         _riseTimer = new Timer(topWaitTime);
         _fallTimer = new Timer(bottomWaitTime);
@@ -55,7 +58,12 @@ public class SlammerEnemy : AbstractEnemy
     {   
         //rising to top
         if(_rising){
-            if(!AttackDurationTimer.IsRunning) AttackDurationTimer.Restart(attackDuration);
+            if(!AttackDurationTimer.IsRunning){
+                AttackDurationTimer.Restart(attackDuration); 
+                jumpAnimation.Play();
+                _audioManager.PlaySFX(_audioManager.whoosh, transform.position);
+            }
+
             //rise
             if(transform.position.y < _originalPosition.y + JumpHeight){
                 _rb.linearVelocity += new Vector2(0, riseSpeed) * Time.deltaTime;
@@ -87,6 +95,7 @@ public class SlammerEnemy : AbstractEnemy
     private void EndAttack()
     {
         attackCollider.OnAttackEnable.RaiseEvent(false);
+        //_audioManager.PlaySFX(_audioManager.bossSmash);
     }
     private void Rise()
     {
@@ -105,6 +114,7 @@ public class SlammerEnemy : AbstractEnemy
     }
     private void OnCollisionEnter2D(Collision2D other) {
         if(other.gameObject.CompareTag("Ground")){
+            _audioManager.PlaySFX(_audioManager.bossSmash, transform.position);
             Instantiate(attack, transform.position + new Vector3(0, -0.5f), Quaternion.identity);
         }
     }
