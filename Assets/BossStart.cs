@@ -14,8 +14,10 @@ public class BossStart : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        boss.SetActive(true);
-        _audioManager.setMusic(_audioManager.bossTheme);
-        Destroy(gameObject);
+        if(collision.gameObject.tag == "Player"){
+            boss.SetActive(true);
+            _audioManager.setMusic(_audioManager.bossTheme);
+            Destroy(gameObject);
+        }
     }
 }

@@ -32,7 +32,7 @@ namespace Enemy
         private new void Start()
         {
             for(int i = 0; i < patrolPosition.Length; i++){
-                patrolPosition[i] = new Vector3(patrolPosition[i].x, transform.position.y);
+                patrolPosition[i] = new Vector3(transform.position.x + 5 - i * 10, transform.position.y);
             }
             base.Start();
             AttackCooldownTimer.Cancel();
@@ -161,10 +161,6 @@ namespace Enemy
 
         void Jump(){
             //_rb.linearVelocity = new Vector2(_rb.linearVelocityX, jumpSpeed);
-        }
-
-        void die(){
-            
         }
     }
 }
