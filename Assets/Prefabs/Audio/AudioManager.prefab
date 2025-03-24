@@ -58,8 +58,9 @@ MonoBehaviour:
   playerJump: {fileID: 8300000, guid: 9e8f0ee1934104c1a97c0e3232e66b51, type: 3}
   zipSound: {fileID: 9142320287274609974}
   wallJump: {fileID: 8300000, guid: 9e8f0ee1934104c1a97c0e3232e66b51, type: 3}
-  bossSmash: {fileID: 8300000, guid: db1732c15711b464cae9d9b93ba583e9, type: 3}
+  bossSmash: {fileID: 8300000, guid: 21fd0ff86f9dd460f9888fa61b0aa6ea, type: 3}
   whoosh: {fileID: 8300000, guid: 6472ce80138bc430dbd58b6c3bab840c, type: 3}
+  bossRoar: {fileID: 8300000, guid: d8b535995d76e49dfba0046ab7359abd, type: 3}
   calmBackground: {fileID: 8300000, guid: 639c3882b255646f4827bd3b38d2cb67, type: 3}
   bossTheme: {fileID: 8300000, guid: c0abf2fef722f4ce59732a0ea1ba5b3a, type: 3}
   runningTheme: {fileID: 8300000, guid: b97c69b8c08fc4cf48636b01856d21ab, type: 3}

@@ -1,5 +1,6 @@
 using Unity.Cinemachine;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class CameraScript : MonoBehaviour
 {
@@ -16,11 +17,16 @@ public class CameraScript : MonoBehaviour
     void Update()
     {
         shakeAmount = Mathf.Lerp(shakeAmount, 0, Time.deltaTime * 5);
-        shake.AmplitudeGain = shakeAmount;
+        if(shake != null)
+            shake.AmplitudeGain = shakeAmount;
     }
 
     public static void Shake(float amount){
         if(amount > shakeAmount)
             shakeAmount = amount;
+    }
+
+    public void StartGame(){
+        SceneManager.LoadScene("PlayerTest");
     }
 }

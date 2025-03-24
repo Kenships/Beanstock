@@ -45,6 +45,7 @@ public class PlayerController : MonoBehaviour, ICanZipline
     [SerializeField] private ParticleSystem ziplineEffect;
     [SerializeField] private ParticleSystem deathEffect;
     [SerializeField] private Animation transition;
+    [SerializeField] private ParticleSystem checkPointEffect;
     
     [Header("___TIMER CONFIG___")]
     [SerializeField] private float invincibilityMax;
@@ -78,6 +79,7 @@ public class PlayerController : MonoBehaviour, ICanZipline
     [Header("___CHECKPOINT___")]
     [SerializeField] private CheckPoint defaultCheckPoint;
     [SerializeField] private GameObject respawnHolder;
+    public static float killHeight;
 
     private const float AxeFollowSpeed = 50;
     private const float AxeRotationSpeed = 300;
@@ -221,6 +223,8 @@ public class PlayerController : MonoBehaviour, ICanZipline
         SetGravity();
         UpdateTimers();
         HandleFootstepSounds();
+
+        if(transform.position.y < killHeight) healthManager.Damage(3);
     }
 
     private void UpdateTimers()
@@ -455,9 +459,9 @@ public class PlayerController : MonoBehaviour, ICanZipline
         Debug.Log("Healed to " + healthRemaining);
     }
     private void OnDamaged(float damage){
-        CameraScript.Shake(0.3f);
-        _audioManager.PlaySFX(_audioManager.playerHit);
         if(damage <= 0 || _invincibility.IsRunning) return;
+        _audioManager.PlaySFX(_audioManager.playerHit);
+        CameraScript.Shake(0.3f);
         hitEffect.Play();
         StartCoroutine(TimeController.FreezeTime(0.01f));
         _invincibility.Restart(invincibilityMax);
@@ -466,7 +470,9 @@ public class PlayerController : MonoBehaviour, ICanZipline
     private void OnDie(GameObject gameObject)
     {
         //effects
+        hitEffect.Play();
         deathEffect.Play();
+        CameraScript.Shake(0.5f);
         //StartCoroutine(TimeController.FreezeTime(0.02f));
         StartCoroutine(DieTransition());
 
@@ -698,6 +704,9 @@ public class PlayerController : MonoBehaviour, ICanZipline
     /*------------------------------*/
     public void SetCheckpoint(GameObject checkpoint)
     {
+        _audioManager.PlaySFX(_audioManager.checkPoint);
+        checkpoint.GetComponent<ParticleSystem>().Play();
+        killHeight = transform.position.y - 30;
         CheckPoint spawn = checkpoint.GetComponent<CheckPoint>();
         if(!_checkPoint || spawn.CheckPointIndex > _checkPoint.CheckPointIndex){
             _checkPoint = spawn;

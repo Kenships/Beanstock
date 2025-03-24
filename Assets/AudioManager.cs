@@ -22,6 +22,8 @@ public class AudioManager : MonoBehaviour
     public AudioClip wallJump;
     public AudioClip bossSmash;
     public AudioClip whoosh;
+    public AudioClip bossRoar;
+    public AudioClip checkPoint;
     
     [Header("Music Clips")]
     public AudioClip calmBackground;

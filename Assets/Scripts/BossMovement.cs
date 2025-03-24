@@ -18,10 +18,12 @@ public class BossMovement : MonoBehaviour
     [SerializeField] private GameObject roarBlast;
     [SerializeField] private Animation headSwing;
     [SerializeField] private GameObject deathEffect;
+    private AudioManager _audioManager;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void OnEnable()
     {
+        _audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
         _health = head.GetHealth();
         _rb = gameObject.GetComponent<Rigidbody2D>();
         StartCoroutine(MovementPattern(1));
@@ -75,6 +77,7 @@ public class BossMovement : MonoBehaviour
     }
     
     IEnumerator startRoar(){
+        _audioManager.PlaySFX(_audioManager.bossRoar);
         yield return new WaitForSeconds(0.15f);
         Instantiate(roarBlast, transform.position + new Vector3(0, 15), Quaternion.identity);
     }

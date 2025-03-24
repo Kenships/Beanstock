@@ -41,6 +41,11 @@ namespace Enemy
             AttackDurationTimer.OnTimerEnd += AttemptAttack;
         }
 
+        private void OnEnable()
+        {
+            AttackCooldownTimer.Cancel();
+        }
+
         private void ProcessBogieInAttackRange(RadarInfo radarInfo)
         {
             if (!radarInfo.Bogie.CompareTag("Player")) return;
