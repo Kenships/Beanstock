@@ -126,7 +126,7 @@ namespace Enemy
         private void AttemptAttack()
         {
             if(inAttackRangeBogies.Count > 0 && !AttackCooldownTimer.IsRunning){
-                AttackObject(inAttackRangeBogies[0]);
+                //AttackObject(inAttackRangeBogies[0]);
                 AttackCooldownTimer.Restart(attackCooldown);
             }
             else

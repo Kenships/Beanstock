@@ -327,6 +327,7 @@ public class PlayerController : MonoBehaviour, ICanZipline
 
     private void Shoot(EmptyEventArgs args){
         Debug.Log("Shoot!");
+        /*
         if(_playerState == State.Moving){
             if (TryLocateClosestTarget(out GameObject closestTarget))
             {
@@ -341,6 +342,7 @@ public class PlayerController : MonoBehaviour, ICanZipline
                 }
             }
         }
+        */
     }
 
     private Vector3 GetAimPosition(Vector3 a, Vector3 b){
