@@ -164,7 +164,6 @@ namespace Enemy
             //knock back
             if (TryGetPlayer(out var player))
             {
-                Debug.Log("knockback");
                 transform.up = GetAimPosition(transform.position, player.transform.position) * -1;
                 _rb.linearVelocity = transform.up * hitSpeed;
                 transform.up = Vector3.zero;

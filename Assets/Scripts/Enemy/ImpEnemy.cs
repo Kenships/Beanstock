@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Collisions;
 using DamageManagement;
@@ -41,9 +42,10 @@ namespace Enemy
             AttackDurationTimer.OnTimerEnd += AttemptAttack;
         }
 
-        private void OnEnable()
+        private void OnDisable()
         {
-            AttackCooldownTimer.Cancel();
+            inAttackRangeBogies.Clear();
+            inRangeBogies.Clear();
         }
 
         private void ProcessBogieInAttackRange(RadarInfo radarInfo)

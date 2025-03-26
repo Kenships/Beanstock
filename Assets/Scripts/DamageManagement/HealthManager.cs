@@ -21,7 +21,6 @@ namespace DamageManagement
 
         private void Awake()
         {
-            health = maxHealth;
             Initialize();
         }
 
@@ -37,6 +36,8 @@ namespace DamageManagement
                 onDie = ScriptableObject.CreateInstance<GameObjectEventChannelSO>();
             if (onRespawn == null)
                 onRespawn = ScriptableObject.CreateInstance<GameObjectEventChannelSO>();
+
+            health = maxHealth;
         }
         public void Die()
         {
@@ -44,8 +45,8 @@ namespace DamageManagement
         }
         public void Damage(float damage)
         {
-            health -= damage;
-            onDamage.onEventRaised?.Invoke((int)health);
+            SetHealth(health - damage);
+            onDamage.onEventRaised?.Invoke(health);
             if (health <= 0f)
             {
                 health = 0f;
@@ -56,12 +57,13 @@ namespace DamageManagement
 
         public void Reset()
         {
-            health = maxHealth;
+            SetHealth(maxHealth);
             onRespawn.onEventRaised?.Invoke(gameObject);
+            
         }
         public void Heal(float heal)
         {
-            health += heal;
+            SetHealth(health + heal);
             if (health > maxHealth)
                 health = maxHealth;
             onHeal.onEventRaised?.Invoke(health);
