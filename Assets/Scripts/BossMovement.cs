@@ -20,6 +20,8 @@ public class BossMovement : MonoBehaviour
     [SerializeField] private GameObject deathEffect;
     private AudioManager _audioManager;
 
+    [SerializeField] private Animation ending;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void OnEnable()
     {
@@ -62,6 +64,8 @@ public class BossMovement : MonoBehaviour
         //getting hit
         if(_health != head.GetHealth()){
             if(_health == 1){
+                _audioManager.setMusic(_audioManager.calmBackground);
+                ending.Play();
                 Instantiate(deathEffect, transform.position, Quaternion.identity);
                 Destroy(gameObject);
             }
