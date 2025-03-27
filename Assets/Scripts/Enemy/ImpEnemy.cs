@@ -23,6 +23,7 @@ namespace Enemy
         private int _aimDirection;
         private bool _onWall;
         private int _patrolNum;
+        private Transform player;
         private enum State{
             Patrolling,
             Attacking,
@@ -31,6 +32,7 @@ namespace Enemy
         
         private new void Start()
         {
+            player = GameObject.FindGameObjectWithTag("Player").transform;
             for(int i = 0; i < patrolPosition.Length; i++){
                 patrolPosition[i] = new Vector3(transform.position.x + 5 - i * 10, transform.position.y);
             }
@@ -126,7 +128,9 @@ namespace Enemy
         private void AttemptAttack()
         {
             if(inAttackRangeBogies.Count > 0 && !AttackCooldownTimer.IsRunning){
-                //AttackObject(inAttackRangeBogies[0]);
+                if(Vector3.Distance(transform.position, player.position) < 3){
+                    AttackObject(inAttackRangeBogies[0]);
+                }
                 AttackCooldownTimer.Restart(attackCooldown);
             }
             else

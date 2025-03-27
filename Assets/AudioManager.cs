@@ -1,17 +1,17 @@
 using System.Linq;
 using Unity.Mathematics.Geometry;
 using UnityEngine;
-using UnityEngine.Assertions;
+using UnityEngine.Assertions; 
 
 public class AudioManager : MonoBehaviour
 {
     [SerializeField] private Transform playerPosition;
     [SerializeField] private AudioSource audioSource;
-    [Header("Audio Sources")]
+    [Header("Audio Sources")] 
     [SerializeField] AudioSource MusicSource;
     //[SerializeField] AudioSource SFXSource;
 
-    [Header("SFX Clips")]
+    [Header("SFX Clips")] 
     public AudioClip trapSound;
     public AudioSource walkSounds;
     public AudioClip enemyHit; // When enemy gets hit
@@ -20,15 +20,19 @@ public class AudioManager : MonoBehaviour
     public AudioClip playerJump;
     public AudioSource zipSound;
     public AudioClip wallJump;
-    public AudioClip bossSmash;
+    public AudioClip bossSmash; 
     public AudioClip whoosh;
-    public AudioClip bossRoar;
+    public AudioClip bossRoar; 
     public AudioClip checkPoint;
+    public AudioClip playerDeath;
+    public AudioClip respawn;
+    public AudioClip mageSpill;
     
     [Header("Music Clips")]
     public AudioClip calmBackground;
     public AudioClip bossTheme;
     public AudioClip runningTheme;
+    public AudioClip ending;  
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -41,14 +45,6 @@ public class AudioManager : MonoBehaviour
         MusicSource.clip = music;
         MusicSource.Play();
     }
-    
-    /*
-    public void playPlayerHitSound()
-    {
-        _playerHitSource.clip = playerHit;
-        _playerHitSource.Play();
-    }
-    */
 
     public void PlaySFX(AudioClip clip)
     {
@@ -57,9 +53,23 @@ public class AudioManager : MonoBehaviour
         audio.Play();
     }
 
+    public void PlaySFX(AudioClip clip, float volume)
+    {
+        AudioSource audio = Instantiate(audioSource, transform.position, Quaternion.identity).GetComponent<AudioSource>();
+        audio.clip = clip;
+        audio.volume = volume;
+        audio.Play();
+    }
+
     public void PlaySFX(AudioClip clip, Vector3 position){
         if(Vector3.Distance(position, playerPosition.position) < 30){
             PlaySFX(clip);
+        }
+    }
+
+    public void PlaySFX(AudioClip clip, Vector3 position, float volume){
+        if(Vector3.Distance(position, playerPosition.position) < 30){
+            PlaySFX(clip, volume);
         }
     }
 

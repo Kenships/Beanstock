@@ -468,9 +468,10 @@ public class PlayerController : MonoBehaviour, ICanZipline
         StartCoroutine(TimeController.FreezeTime(0.01f));
         _invincibility.Restart(invincibilityMax);
     }
-
+ 
     private void OnDie(GameObject gameObject)
     {
+        if(deathEffect.isPlaying)return;
         //effects
         hitEffect.Play();
         deathEffect.Play();
@@ -485,6 +486,7 @@ public class PlayerController : MonoBehaviour, ICanZipline
     }
 
     private IEnumerator DieTransition(){
+        _audioManager.PlaySFX(_audioManager.playerDeath, 0.6f);
         _playerState = State.Ziplining;
         yield return new WaitForSeconds(0.6f);
         _playerState = State.Moving;

@@ -102,7 +102,7 @@ public class SlammerEnemy : AbstractEnemy
         _fallTimer.Restart();
         _rising = true;
     }
-
+ 
     private void Fall()
     {
         _riseTimer.Restart();
@@ -114,7 +114,7 @@ public class SlammerEnemy : AbstractEnemy
     }
     private void OnCollisionEnter2D(Collision2D other) {
         if(other.gameObject.CompareTag("Ground")){
-            _audioManager.PlaySFX(_audioManager.bossSmash, transform.position);
+            _audioManager.PlaySFX(_audioManager.bossSmash, transform.position, 0.6f);
             Instantiate(attack, transform.position + new Vector3(0, -0.5f), Quaternion.identity);
         }
     }

@@ -64,7 +64,7 @@ public class BossMovement : MonoBehaviour
         //getting hit
         if(_health != head.GetHealth()){
             if(_health == 1){
-                _audioManager.setMusic(_audioManager.calmBackground);
+                _audioManager.setMusic(_audioManager.ending);
                 ending.Play();
                 Instantiate(deathEffect, transform.position, Quaternion.identity);
                 Destroy(gameObject);

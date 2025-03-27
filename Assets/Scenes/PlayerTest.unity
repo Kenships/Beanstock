@@ -28412,6 +28412,14 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5956838566642608982, guid: 909c60bbfb99d4ddfbc14e2741aaf90f, type: 3}
+      propertyPath: ending
+      value: 
+      objectReference: {fileID: 8300000, guid: 1631ea8fbce0f42a59af10edeb08363d, type: 3}
+    - target: {fileID: 5956838566642608982, guid: 909c60bbfb99d4ddfbc14e2741aaf90f, type: 3}
+      propertyPath: respawn
+      value: 
+      objectReference: {fileID: 8300000, guid: ae407dd8fd8ba4baab5609794e061e78, type: 3}
+    - target: {fileID: 5956838566642608982, guid: 909c60bbfb99d4ddfbc14e2741aaf90f, type: 3}
       propertyPath: bossRoar
       value: 
       objectReference: {fileID: 8300000, guid: d8b535995d76e49dfba0046ab7359abd, type: 3}
@@ -28420,9 +28428,17 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 8300000, guid: 21fd0ff86f9dd460f9888fa61b0aa6ea, type: 3}
     - target: {fileID: 5956838566642608982, guid: 909c60bbfb99d4ddfbc14e2741aaf90f, type: 3}
+      propertyPath: mageSpill
+      value: 
+      objectReference: {fileID: 8300000, guid: 604f6f8d2ca394ff7a796ba5af6da42d, type: 3}
+    - target: {fileID: 5956838566642608982, guid: 909c60bbfb99d4ddfbc14e2741aaf90f, type: 3}
       propertyPath: checkPoint
       value: 
-      objectReference: {fileID: 8300000, guid: 175ecc71834cf4962a7416cdd6ef0d43, type: 3}
+      objectReference: {fileID: 8300000, guid: ae407dd8fd8ba4baab5609794e061e78, type: 3}
+    - target: {fileID: 5956838566642608982, guid: 909c60bbfb99d4ddfbc14e2741aaf90f, type: 3}
+      propertyPath: playerDeath
+      value: 
+      objectReference: {fileID: 8300000, guid: 2e4aa4dd0b5fe4256959a4124db0ce81, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -60202,11 +60218,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1470531250832606000, guid: 17a9ea69c2fb04719b363740ea3ac794, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -87.96885
+      value: -87.96994
       objectReference: {fileID: 0}
     - target: {fileID: 1470531250832606000, guid: 17a9ea69c2fb04719b363740ea3ac794, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 18.11874
+      value: 18.118721
       objectReference: {fileID: 0}
     - target: {fileID: 1470531250832606000, guid: 17a9ea69c2fb04719b363740ea3ac794, type: 3}
       propertyPath: m_LocalPosition.z
