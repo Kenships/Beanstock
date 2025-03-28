@@ -6,7 +6,6 @@ using DefaultNamespace;
 using Enemy;
 using Events.Channels;
 using Events.Input;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
@@ -197,7 +196,7 @@ public class PlayerController : MonoBehaviour, ICanZipline
     private void HandleFootstepSounds()
     {
         // Check if the player is on the ground and moving horizontally.
-        if (_onGround && Mathf.Abs(_rb.linearVelocity.x) > 5f || _wallRunTimer.IsRunning)
+        if (_onGround && Mathf.Abs(_rb.linearVelocity.x) > 5f || WallRunInput() && _wallSide != 0)
             _audioManager.PlayFootsteps();
         else
             _audioManager.StopFootsteps();
