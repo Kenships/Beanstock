@@ -30,6 +30,7 @@ public class AudioManager : MonoBehaviour
     
     [Header("Music Clips")]
     public AudioClip calmBackground;
+    public AudioClip runningTheme;
     public AudioClip bossTheme;
     public AudioClip runningTheme;
     public AudioClip ending;  

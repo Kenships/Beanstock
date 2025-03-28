@@ -89,7 +89,7 @@ public class ObjectPoolManager : MonoBehaviour
         return spawnableObj;
     }
 
-    public static void RecycleObject(GameObject spawnedObject)
+    public static GameObject RecycleObject(GameObject spawnedObject)
     {
         string clippedName = spawnedObject.name.Replace("(Clone)", "");
         PooledObjectInfo pool = PooledObjects.Find(obj => obj.LookupString == clippedName);
@@ -102,6 +102,8 @@ public class ObjectPoolManager : MonoBehaviour
         
         spawnedObject.SetActive(false);
         pool.InactiveObjects.Add(spawnedObject);
+        
+        return spawnedObject;
     }
 
     private static GameObject GetObjectHolder(PoolType poolType)
