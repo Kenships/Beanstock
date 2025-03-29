@@ -673,7 +673,7 @@ public class PlayerController : MonoBehaviour, ICanZipline
             }
         }
 
-        return true;
+        return directionalTarget;
     }
 
 
@@ -693,13 +693,12 @@ public class PlayerController : MonoBehaviour, ICanZipline
 
             if (!Physics2D.Raycast(myPos, direction, distance, groundLayerMask) && distance < closestDistance)
             {
-                
                 closestTarget = bogie;
                 closestDistance = distance;
             }
         }
         
-        return true;
+        return closestTarget;
     }
     
     /*----------------------------------*/

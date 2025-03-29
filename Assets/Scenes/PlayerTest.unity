@@ -45714,6 +45714,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1837979855}
     - target: {fileID: 2332730141399857760, guid: 6c6e01367789f449a812f78d1861ca7d, type: 3}
+      propertyPath: _checkPoint
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 2332730141399857760, guid: 6c6e01367789f449a812f78d1861ca7d, type: 3}
       propertyPath: checkPointEffect
       value: 
       objectReference: {fileID: 0}
@@ -66148,9 +66152,17 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 1034004287}
+    - target: {fileID: 588755179162836641, guid: 7f48d29cb8581b748ae4c3321a82146b, type: 3}
+      propertyPath: m_SortingLayerID
+      value: -1233874673
+      objectReference: {fileID: 0}
     - target: {fileID: 926970778832438511, guid: 7f48d29cb8581b748ae4c3321a82146b, type: 3}
       propertyPath: m_Name
       value: BossHealth
+      objectReference: {fileID: 0}
+    - target: {fileID: 926970778832438511, guid: 7f48d29cb8581b748ae4c3321a82146b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1181208558640256335, guid: 7f48d29cb8581b748ae4c3321a82146b, type: 3}
       propertyPath: healthManager
