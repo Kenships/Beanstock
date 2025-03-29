@@ -221,6 +221,7 @@ public class PlayerController : MonoBehaviour, ICanZipline
                 break;
             case State.Ziplining:
                 playerSprite.eulerAngles = Vector3.zero;
+                SetSpriteDirection();
                 break;
         }
         //jittery camera
@@ -245,7 +246,7 @@ public class PlayerController : MonoBehaviour, ICanZipline
     }
 
     private void SetSpriteDirection(){
-        if(_direction == 1)
+        if(_direction == 1 || _rb.linearVelocityX > 0)
             spriteRenderer.flipX = true;
         else
             spriteRenderer.flipX = false;
@@ -651,12 +652,21 @@ public class PlayerController : MonoBehaviour, ICanZipline
         directionalTarget = null;
         if(enemiesInRadar.Count == 0) return false;
         if(inputDirection == Vector2.zero) return TryLocateClosestTarget(out directionalTarget);
-        directionalTarget = enemiesInRadar[0];
-        float bestDotValue = Vector2.Dot(inputDirection, (directionalTarget.transform.position - transform.position).normalized);
+        float bestDotValue = -69420;
         foreach (var bogie in enemiesInRadar)
         {
-            float dotValue = Vector2.Dot(inputDirection, (bogie.transform.position - transform.position).normalized);
-            if (dotValue > bestDotValue)
+            Vector3 bogiePos = bogie.transform.position;
+            Vector3 myPos = transform.position;
+            Vector3 direction = (bogiePos - myPos).normalized;
+            
+            float dotValue = Vector2.Dot(inputDirection, direction);
+            
+            float distance = Vector3.Distance(myPos, bogiePos);
+
+
+            LayerMask groundLayerMask = LayerMask.GetMask("Ground");
+
+            if (!Physics2D.Raycast(myPos, direction, distance, groundLayerMask) && dotValue > bestDotValue)
             {
                 directionalTarget = bogie;
                 bestDotValue = dotValue;
@@ -673,14 +683,18 @@ public class PlayerController : MonoBehaviour, ICanZipline
         if (enemiesInRadar.Count == 0) return false;
         
         Vector3 myPos = transform.position;
-        closestTarget = enemiesInRadar[0];
-        float closestDistance = Vector3.Distance(closestTarget.transform.position, myPos);
-        foreach (GameObject enemy in enemiesInRadar)
+        float closestDistance = 69420;
+        foreach (GameObject bogie in enemiesInRadar)
         {
-            float distance = Vector3.Distance(enemy.transform.position, myPos);
-            if (distance < closestDistance)
+            Vector3 bogiePos = bogie.transform.position;
+            Vector3 direction = (bogiePos - myPos).normalized;
+            float distance = Vector3.Distance(myPos, bogiePos);
+            LayerMask groundLayerMask = LayerMask.GetMask("Ground");
+
+            if (!Physics2D.Raycast(myPos, direction, distance, groundLayerMask) && distance < closestDistance)
             {
-                closestTarget = enemy;
+                
+                closestTarget = bogie;
                 closestDistance = distance;
             }
         }
@@ -712,11 +726,11 @@ public class PlayerController : MonoBehaviour, ICanZipline
     /*------------------------------*/
     public void SetCheckpoint(GameObject checkpoint)
     {
-        _audioManager.PlaySFX(_audioManager.checkPoint);
         checkpoint.GetComponent<ParticleSystem>().Play();
         killHeight = transform.position.y - 30;
         CheckPoint spawn = checkpoint.GetComponent<CheckPoint>();
         if(!_checkPoint || spawn.CheckPointIndex > _checkPoint.CheckPointIndex){
+            _audioManager.PlaySFX(_audioManager.checkPoint);
             _checkPoint = spawn;
         }
     }

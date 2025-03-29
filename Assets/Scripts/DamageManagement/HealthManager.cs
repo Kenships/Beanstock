@@ -79,5 +79,10 @@ namespace DamageManagement
         {
             return health;
         }
+        
+        public float GetMaxHealth()
+        {
+            return maxHealth;
+        }
     }
 }

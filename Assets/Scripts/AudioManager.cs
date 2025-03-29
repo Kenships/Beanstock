@@ -32,7 +32,6 @@ public class AudioManager : MonoBehaviour
     public AudioClip calmBackground;
     public AudioClip runningTheme;
     public AudioClip bossTheme;
-    public AudioClip runningTheme;
     public AudioClip ending;  
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created

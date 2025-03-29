@@ -3,6 +3,7 @@ using UnityEngine;
 public class BossStart : MonoBehaviour
 {
     [SerializeField] private GameObject boss;
+    [SerializeField] private GameObject bossHealth;
     private AudioManager _audioManager;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -16,6 +17,7 @@ public class BossStart : MonoBehaviour
     {
         if(collision.gameObject.tag == "Player"){
             boss.SetActive(true);
+            bossHealth.SetActive(true);
             _audioManager.setMusic(_audioManager.bossTheme);
             Destroy(gameObject);
         }

@@ -118,6 +118,7 @@ public class Zipline : MonoBehaviour
         
         GameObject zipHolder = Instantiate(zipHandlePrefab, FindClosestPoint(inputObj.transform, point1.position, point2.position - point1.position), Quaternion.identity);
         Transform zipHolderTransform = zipHolder.transform;
+        
         zipHolderTransform.up = new Vector3(zipHolderTransform.position.x - point2.position.x,
             zipHolderTransform.position.y - point2.position.y) * -1;
         

@@ -5,6 +5,7 @@ using DamageManagement;
 using Events.Channels;
 using UnityEngine;
 using UnityEngine.Serialization;
+using UnityEngine.UIElements;
 
 namespace Enemy
 {
@@ -63,6 +64,7 @@ namespace Enemy
             {
                 inAttackRangeBogies.Remove(radarInfo.Bogie);
                 AttackDurationTimer.Cancel();
+                enemyState = State.Chasing;
             }
                 
         }
@@ -70,10 +72,12 @@ namespace Enemy
         protected override void ProcessBogie(RadarInfo radarInfo)
         {
             if (!radarInfo.Bogie.CompareTag("Player")) return;
-
-            if (radarInfo.InRange)
+            LayerMask groundLayerMask = LayerMask.GetMask("Ground");
+            Vector3 bogiePos = radarInfo.Bogie.transform.position;
+            if (radarInfo.InRange && !Physics2D.Raycast(transform.position, (bogiePos - transform.position).normalized, 
+                    Vector3.Distance(transform.position, bogiePos), groundLayerMask) )
                 AddBogie(radarInfo.Bogie);
-            else
+            else if (!radarInfo.InRange)
                 RemoveBogie(radarInfo.Bogie);
         }
 
@@ -91,8 +95,9 @@ namespace Enemy
                             _patrolNum = 0;
                         }
                     }
-
-                    if(inRangeBogies.Count > 0 && Vector3.Distance(transform.position, _originalPosition) < moveRange){
+                    
+                    
+                    if(TryGetPlayer(out GameObject p) && Vector3.Distance(p.transform.position, _originalPosition) < moveRange){
                         enemyState = State.Chasing;
                     }
                     break;
@@ -112,7 +117,7 @@ namespace Enemy
                     break;
             }
             AttackCooldownTimer.Tick(Time.deltaTime);
-            if(_rb.linearVelocity.x > 0){
+            if(_rb.linearVelocity.x > 0 || (TryGetPlayer(out GameObject player) && player.transform.position.x > transform.position.x)){
                 enemySprite.flipX = false;
             }
             else{
@@ -130,14 +135,10 @@ namespace Enemy
         private void AttemptAttack()
         {
             if(inAttackRangeBogies.Count > 0 && !AttackCooldownTimer.IsRunning){
-                if(Vector3.Distance(transform.position, player.position) < 3){
+                if(Vector3.Distance(transform.position, inAttackRangeBogies[0].transform.position) < 3){
                     AttackObject(inAttackRangeBogies[0]);
                 }
                 AttackCooldownTimer.Restart(attackCooldown);
-            }
-            else
-            {
-                enemyState = State.Chasing;
             }
         }
 
